@@ -131,6 +131,7 @@
   
         this.ws.onopen = () => {
           if (!this.messagesLoaded) {
+            alert('TTM: WS open');
             this._loadMessages();
           }
         };
