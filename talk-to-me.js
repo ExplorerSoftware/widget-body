@@ -32,9 +32,10 @@
       async init() {
         await this._loadLibraries();
         const config = await this._fetchConfig();
-        alert("ESSE É O CONFIG: " + config);
+        alert('[TTM] config recebido:\\n' + JSON.stringify(config, null, 2));
+        alert('[TTM] config.metadata recebido:\\n' + JSON.stringify(config && config.metadata, null, 2));
         this.theme = config.metadata;
-        alert("ESSE É O THEME: " + this.theme);
+        alert('[TTM] theme aplicado:\\n' + JSON.stringify(this.theme, null, 2));
         this._createUI();
       }
 
@@ -819,7 +820,7 @@
       async _fetchConfig() {
         return new Promise((resolve, reject) => {
           const url = `${this.wsUrl}/ws/config:${this.sessionId}?token=${this.token}`;
-          alert()
+          alert('[TTM] Config WS URL:\\n' + url);
           
           const ws = new WebSocket(url);
           
@@ -829,12 +830,15 @@
           
           ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
+            alert('[TTM] Config payload (raw):\\n' + event.data);
+            alert('[TTM] Config.metadata:\\n' + JSON.stringify(data && data.metadata, null, 2));
             ws.close();
             resolve(data);
           };
           
           ws.onerror = (error) => {
             ws.close();
+            alert('[TTM] Erro no WS de config');
             reject(new Error("Falha ao carregar configuração via WebSocket"));
           };
           
@@ -850,6 +854,12 @@
       _createUI() {
             const isDark = this.theme.theme === "dark";
             const primaryColor = this.theme.color || "#000000";
+            alert('[TTM] _createUI(): isDark=' + isDark +
+                  ', primaryColor=' + primaryColor +
+                  ', icon=' + this.theme.icon +
+                  ', name=' + this.theme.name +
+                  ', logo_url=' + this.theme.logo_url +
+                  ', wallpaper_url=' + this.theme.wallpaper_url);
             this._injectCustomStyles();
             this.container = document.createElement("div");
             this.container.id = "ttm-chat-container";
@@ -891,7 +901,7 @@
                     <div
                         id="ttm-chat-content"
                         class="flex flex-col h-full"
-                        style="opacity: 0; pointer-events: none;  position: relative;"
+                        style="opacity: 0; pointer-events: none; display: none; position: relative;"
                         >
                         <div
                         class="p-1 flex items-start gap-2 flex-shrink-0"
