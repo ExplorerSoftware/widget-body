@@ -946,7 +946,7 @@
                     <div
                         id="ttm-drop-area"
                         class="hidden absolute inset-0 z-50 flex items-center justify-center"
-                        style="background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px);"
+                        style="background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);"
                     >
                         <div
                         id="ttm-drop-zone"
