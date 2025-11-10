@@ -4,10 +4,10 @@
     class TalkToMeChat {
       constructor(config) {
         this.token = config.token;
-        if (!config.apiUrl) {
-          throw new Error('TalkToMe: apiUrl é obrigatória. Configure no constructor: new TalkToMeChat({ token: "...", apiUrl: "https://..." })');
+        if (!this.token) {
+          throw new Error('TalkToMe: token é obrigatório. Configure no constructor: new TalkToMeChat({ token: "..." })');
         }
-        this.apiUrl = config.apiUrl;
+        this.wsUrl = config.wsUrl || 'wss://talk-to-me.fly.dev';
         this.theme = null;
         this.threadId = localStorage.getItem("ttm_thread_id") || null;
         this.ws = null;
@@ -25,7 +25,6 @@
         this.pendingWebSocketMessages = [];
         this.messagesQueue = [];
         this.isProcessingQueue = false;
-        this.currentRequest = null;
         this._unreadCount = 0;
       }
   
@@ -120,10 +119,7 @@
       // ========================================
 
       _connectWebSocket() {
-        const apiHost = new URL(this.apiUrl).host;
-        const protocol = this.apiUrl.startsWith("https") ? "wss:" : "ws:";
-        const wsUrl = `${protocol}//${apiHost}/ws/${this.threadId}?token=${this.token}`;
-  
+        const wsUrl = `${this.wsUrl}/ws/${this.threadId || 'new'}?token=${this.token}`;
         this.ws = new WebSocket(wsUrl);
   
         this.ws.onopen = () => {
@@ -152,13 +148,18 @@
               this._clearThreadData();
             } 
           }
+
+          // Receber threadId do servidor
+          if (data.type === "thread_created" && data.thread_id) {
+            this.threadId = data.thread_id;
+            localStorage.setItem("ttm_thread_id", this.threadId);
+          }
         };
       }
 
       async _sendMessage(textOverride = null, files = null) {
         const text = textOverride || this.inputField.value;
-        let mediaIds = [];
-  
+        
         if (!text && !files) return;
   
         if (!textOverride) {
@@ -167,56 +168,47 @@
           this._updateSendButtonIcon();
         }
   
-        const abortController = new AbortController();
-        this.currentRequest = abortController;
-  
+        let filesData = [];
         if (files && files.length > 0) {
-            for (const file of files) {
-              const formData = new FormData();
-              formData.append("file", file);
-  
-              const uploadFile = await fetch(`${this.apiUrl}/sdk/chat/upload`, {
-                  method: "POST",
-                  headers: {
-                      Authorization: `Bearer ${this.token}`,
-                  },
-                  body: formData,
-              })
-              if (!uploadFile.ok) {
-                  throw new Error("Falha ao enviar arquivo");
-              }
-              const data = await uploadFile.json();
-              mediaIds.push(data.id);
-            }
+          filesData = await this._convertFilesToBase64(files);
         }
   
-        const response = await fetch(`${this.apiUrl}/sdk/chat/message`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${this.token}`,
-          },
-          body: JSON.stringify({
-            user_id: this.userIdentifier,
-            text: text || null,
-            media_ids: mediaIds,
-            metadata: {},
-            reply_to: null,
-          }),
-          signal: abortController.signal,
-        });
-  
-        if (!response.ok) {
-          throw new Error("Falha ao enviar mensagem");
-        }
-  
-        const data = await response.json();
-  
-        if (data.thread_id && !this.threadId) {
-          this.threadId = data.thread_id;
-          localStorage.setItem("ttm_thread_id", this.threadId);
+        if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
           this._connectWebSocket();
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
+  
+        this.ws.send(JSON.stringify({
+          type: 'send_message',
+          user_id: this.userIdentifier,
+          text: text || null,
+          files: filesData,
+          metadata: {},
+          thread_id: this.threadId
+        }));
+      }
+
+      async _convertFilesToBase64(files) {
+        const filesData = [];
+        for (const file of files) {
+          const base64 = await this._fileToBase64(file);
+          filesData.push({
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            data: base64
+          });
+        }
+        return filesData;
+      }
+
+      _fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = error => reject(error);
+        });
       }
 
       _initAudioPlayers() {
@@ -720,11 +712,6 @@
         }
 
       _clearThreadData() {
-        if (this.currentRequest) {
-          this.currentRequest.abort();
-          this.currentRequest = null;
-        }
-  
         if (this.ws) {
           this.ws.close();
           this.ws = null;
@@ -748,21 +735,25 @@
       async _loadMessages() {
         if (this.messagesLoaded) return;
   
-        const response = await fetch(`${this.apiUrl}/sdk/chat/messages?thread_id=${this.threadId}`, {
-          headers: {
-            Authorization: `Bearer ${this.token}`,
-          },
-        });
-        if (!response.ok) {
-          throw new Error("Falha ao carregar mensagens");
-        }
-  
-        const data = await response.json();
-        data.forEach(message => {
-          this._enqueueMessage(message, false);
-        });
-        this.messagesLoaded = true;
-        this._processPendingMessages();
+        this.ws.send(JSON.stringify({
+          type: 'get_messages',
+          thread_id: this.threadId
+        }));
+        
+        // Aguardar resposta via onmessage
+        const checkMessages = (event) => {
+          const data = JSON.parse(event.data);
+          if (data.type === 'messages_history') {
+            data.messages.forEach(message => {
+              this._enqueueMessage(message, false);
+            });
+            this.messagesLoaded = true;
+            this._processPendingMessages();
+            this.ws.removeEventListener('message', checkMessages);
+          }
+        };
+        
+        this.ws.addEventListener('message', checkMessages);
       }
 
       async _processMessageQueue() {
@@ -839,15 +830,20 @@
       }
 
       async _fetchConfig() {
-        const response = await fetch(`${this.apiUrl}/sdk/config`, {
-          headers: {
-            Authorization: `Bearer ${this.token}`,
-          },
+        return new Promise((resolve, reject) => {
+          const ws = new WebSocket(`${this.wsUrl}/config?token=${this.token}`);
+          
+          ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            ws.close();
+            resolve(data);
+          };
+          
+          ws.onerror = () => {
+            ws.close();
+            reject(new Error("Falha ao carregar configuração via WebSocket"));
+          };
         });
-        if (!response.ok) {
-          throw new Error("Falha ao carregar configuração do chat");
-        }
-        return await response.json();
       }
 
       // ========================================
