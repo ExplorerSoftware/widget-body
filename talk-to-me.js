@@ -836,31 +836,44 @@
 
       async _fetchConfig() {
         return new Promise((resolve, reject) => {
-          try{
-            if(!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+          try {
+            if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
               this._connectWebSocket();
-               new Promise(resolve => setTimeout(resolve, 1000));
             }
+
             let timeoutId;
 
             const onMessage = (event) => {
               try {
                 const data = JSON.parse(event.data);
-                if(data && (data.type === 'config:response' || data.type === 'metadata')) {
+                if (data && (data.type === 'config:response' || data.type === 'metadata')) {
                   this.ws.removeEventListener('message', onMessage);
                   clearTimeout(timeoutId);
                   resolve(data.data ?? data);
                 }
               } catch (_) {}
             };
-            
+
+            const sendRequest = () => {
+              this.ws.send(JSON.stringify({
+                type: 'config:request',
+                session_id: this.sessionId,
+                thread_id: this.threadId || null
+              }));
+            };
+
             this.ws.addEventListener('message', onMessage);
 
-            this.ws.send(JSON.stringify({
-              type: 'config:request',
-              session_id: this.sessionId,
-              thread_id: this.threadId || null
-            }))
+            if (this.ws.readyState === WebSocket.OPEN) {
+              sendRequest();
+            } else {
+              const onOpen = () => {
+                this.ws.removeEventListener('open', onOpen);
+                sendRequest();
+              };
+              this.ws.addEventListener('open', onOpen);
+            }
+
             timeoutId = setTimeout(() => {
               this.ws.removeEventListener('message', onMessage);
               reject(new Error('Timeout ao obter configuração via WebSocket'));
