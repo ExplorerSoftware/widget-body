@@ -7,7 +7,7 @@
         if (!this.token) {
           throw new Error('TalkToMe: token é obrigatório. Configure no constructor: new TalkToMeChat({ token: "..." })');
         }
-        this.wsUrl = config.wsUrl || 'wss://talk-to-me.fly.dev';
+        this.wsUrl = config.wsUrl
         this.theme = null;
         this.threadId = localStorage.getItem("ttm_thread_id") || null;
         this.ws = null;
