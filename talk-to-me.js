@@ -837,7 +837,7 @@
 
       async _fetchConfig() {
         return new Promise((resolve, reject) => {
-          const ws = new WebSocket(`${this.wsUrl}/config/${this.sessionId}?token=${this.token}`);
+          const ws = new WebSocket(`${this.wsUrl}/ws/config:${this.sessionId}?token=${this.token}`);
           ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             ws.close();
