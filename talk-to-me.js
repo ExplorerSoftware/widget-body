@@ -891,7 +891,7 @@
                     <div
                         id="ttm-chat-content"
                         class="flex flex-col h-full"
-                        style="opacity: 0; pointer-events: none; display: none; position: relative;"
+                        style="opacity: 0; pointer-events: none;  position: relative;"
                         >
                         <div
                         class="p-1 flex items-start gap-2 flex-shrink-0"
