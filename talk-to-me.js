@@ -826,6 +826,9 @@
           
           ws.onopen = () => {
             alert('[TTM] Config WS OPEN');
+            setTimeout(() => {
+              alert('[TTM] Nenhum payload recebido após 5s. readyState=' + ws.readyState + ' (0=CONNECTING,1=OPEN,2=CLOSING,3=CLOSED)');
+            }, 5000);
           };
           
           ws.onmessage = (event) => {
@@ -848,6 +851,12 @@
             alert('[TTM] Config.metadata:\n' + JSON.stringify(data && data.metadata, null, 2));
             ws.close();
             resolve(data);
+          };
+          
+          ws.onerror = (error) => {
+            alert('[TTM] Erro no WS de config');
+            ws.close();
+            reject(new Error("Falha ao carregar configuração via WebSocket"));
           };
           
           ws.onclose = (event) => {
