@@ -32,7 +32,9 @@
       async init() {
         await this._loadLibraries();
         const config = await this._fetchConfig();
+        alert(config);
         this.theme = config.metadata;
+        alert(this.theme);
         this._createUI();
       }
 
@@ -817,7 +819,7 @@
       async _fetchConfig() {
         return new Promise((resolve, reject) => {
           const url = `${this.wsUrl}/ws/config:${this.sessionId}?token=${this.token}`;
-
+          alert()
           
           const ws = new WebSocket(url);
           
