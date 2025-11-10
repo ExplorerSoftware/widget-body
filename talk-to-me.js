@@ -32,7 +32,7 @@
       async init() {
         await this._loadLibraries();
         const config = await this._fetchConfig();
-        this.theme = config;
+        this.theme = config.metadata;
         this._createUI();
       }
 
