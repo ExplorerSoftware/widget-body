@@ -838,29 +838,26 @@
       async _fetchConfig() {
         return new Promise((resolve, reject) => {
           const url = `${this.wsUrl}/ws/config:${this.sessionId}?token=${this.token}`;
-          alert('Conectando ao WebSocket: ' + url); // Debug
+
           
           const ws = new WebSocket(url);
           
           ws.onopen = () => {
-            alert('WebSocket conectado!'); // Debug
+
           };
           
           ws.onmessage = (event) => {
-            alert('Mensagem recebida: ' + event.data); // Debug
             const data = JSON.parse(event.data);
             ws.close();
             resolve(data);
           };
           
           ws.onerror = (error) => {
-            alert('Erro no WebSocket: ' + error); // Debug
             ws.close();
             reject(new Error("Falha ao carregar configuração via WebSocket"));
           };
           
           ws.onclose = (event) => {
-            alert('WebSocket fechado: ' + event.code + ' ' + event.reason); // Debug
           };
         });
       }
@@ -1655,7 +1652,6 @@
                         window.URL.revokeObjectURL(url);
                         document.body.removeChild(a);
                     } catch (error) {
-                        alert('Erro ao baixar arquivo. Por favor, tente novamente.');
                     }
                 });
             }
