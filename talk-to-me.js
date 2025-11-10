@@ -11,6 +11,7 @@
         this.theme = null;
         this.threadId = localStorage.getItem("ttm_thread_id") || null;
         this.ws = null;
+        this.sessionId = this._generateSessionId();
         this.isOpen = false;
         this.userIdentifier = this._getUserIdentifier();
         this.container = null;
@@ -33,6 +34,11 @@
         const config = await this._fetchConfig();
         this.theme = config;
         this._createUI();
+      }
+
+
+      _generateSessionId() {
+        return 'session_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
       }
   
       _getUserIdentifier() {
@@ -119,7 +125,7 @@
       // ========================================
 
       _connectWebSocket() {
-        const wsUrl = `${this.wsUrl}/ws/${this.threadId || 'new'}?token=${this.token}`;
+        const wsUrl = `${this.wsUrl}/ws/${this.sessionId}/${this.threadId || 'new'}?token=${this.token}`;
         this.ws = new WebSocket(wsUrl);
   
         this.ws.onopen = () => {
@@ -831,8 +837,7 @@
 
       async _fetchConfig() {
         return new Promise((resolve, reject) => {
-          const ws = new WebSocket(`${this.wsUrl}/config?token=${this.token}`);
-          
+          const ws = new WebSocket(`${this.wsUrl}/config/${this.sessionId}?token=${this.token}`);
           ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             ws.close();
