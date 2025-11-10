@@ -825,24 +825,33 @@
           const ws = new WebSocket(url);
           
           ws.onopen = () => {
-
+            alert('[TTM] Config WS OPEN');
           };
           
           ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            alert('[TTM] Config payload (raw):\\n' + event.data);
-            alert('[TTM] Config.metadata:\\n' + JSON.stringify(data && data.metadata, null, 2));
+            const isString = (typeof event.data === 'string');
+            alert('[TTM] Config payload (raw):\n' + (isString ? event.data : '[binary frame]'));
+          
+            if (!isString) {
+              alert('[TTM] Config payload não é texto (esperado JSON string)');
+              return;
+            }
+          
+            let data;
+            try {
+              data = JSON.parse(event.data);
+            } catch (e) {
+              alert('[TTM] JSON parse error:\n' + e.message);
+              return;
+            }
+          
+            alert('[TTM] Config.metadata:\n' + JSON.stringify(data && data.metadata, null, 2));
             ws.close();
             resolve(data);
           };
           
-          ws.onerror = (error) => {
-            ws.close();
-            alert('[TTM] Erro no WS de config');
-            reject(new Error("Falha ao carregar configuração via WebSocket"));
-          };
-          
           ws.onclose = (event) => {
+            alert('[TTM] Config WS CLOSE: code=' + event.code + ', reason=' + (event.reason || '(empty)'));
           };
         });
       }
