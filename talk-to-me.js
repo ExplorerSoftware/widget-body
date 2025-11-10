@@ -863,6 +863,7 @@
             const sendRequest = () => {
               this.ws.send(JSON.stringify({
                 type: 'config:request',
+                token: this.token,
                 session_id: this.sessionId,
                 thread_id: this.threadId || null
               }));
