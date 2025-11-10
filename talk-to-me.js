@@ -32,10 +32,7 @@
       async init() {
         await this._loadLibraries();
         const config = await this._fetchConfig();
-        alert('[TTM] config recebido:\\n' + JSON.stringify(config, null, 2));
-        alert('[TTM] config.metadata recebido:\\n' + JSON.stringify(config && config.metadata, null, 2));
         this.theme = config.metadata;
-        alert('[TTM] theme aplicado:\\n' + JSON.stringify(this.theme, null, 2));
         this._createUI();
       }
 
@@ -57,14 +54,35 @@
         if (this.librariesLoaded) return;
   
         try {
-          await Promise.all([this._loadFramerMotion(), this._loadLucide()]);
+          await Promise.all([this._loadTailwind(), this._loadFramerMotion(), this._loadLucide()]);
           this.librariesLoaded = true;
         } catch (error) {
           console.error("Erro ao carregar bibliotecas:", error);
         }
       }
   
-      // Tailwind CSS is built via CLI and must be included by the host page.
+      _loadTailwind() {
+        return new Promise((resolve, reject) => {
+          if (document.querySelector('script[src*="tailwindcss"]')) {
+            resolve();
+            return;
+          }
+          const script = document.createElement("script");
+          script.src = "https://cdn.tailwindcss.com";
+          script.onload = () => {
+            if (window.tailwind) {
+              window.tailwind.config = {
+                corePlugins: {
+                  preflight: false,
+                },
+              };
+            }
+            resolve();
+          };
+          script.onerror = () => reject(new Error("Falha ao carregar Tailwind CSS"));
+          document.head.appendChild(script);
+        });
+      }
   
       _loadFramerMotion() {
         return new Promise((resolve, reject) => {
@@ -137,7 +155,6 @@
             } 
           }
 
-          // Receber threadId do servidor
           if (data.type === "thread_created" && data.thread_id) {
             this.threadId = data.thread_id;
             localStorage.setItem("ttm_thread_id", this.threadId);
@@ -819,60 +836,38 @@
 
       async _fetchConfig() {
         return new Promise((resolve, reject) => {
-          const url = `${this.wsUrl}/ws/config:${this.sessionId}?token=${this.token}`;
-          alert('[TTM] Config WS URL:\\n' + url);
-          
-          const ws = new WebSocket(url);
-          
-          ws.onopen = () => {
-            alert('[TTM] Config WS OPEN');
-          
-            // solicita explicitamente a configuração
-            try {
-              const probe = { type: 'get_config', session_id: this.sessionId };
-              ws.send(JSON.stringify(probe));
-              alert('[TTM] Enviado get_config:\n' + JSON.stringify(probe, null, 2));
-            } catch (e) {
-              alert('[TTM] Falha ao enviar get_config: ' + e.message);
+          try{
+            if(!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+              this._connectWebSocket();
+               new Promise(resolve => setTimeout(resolve, 1000));
             }
-          
-            // se nada chegar, avisa após 5s
-            setTimeout(() => {
-              alert('[TTM] Nenhum payload recebido após 5s. readyState=' + ws.readyState + ' (0=CONNECTING,1=OPEN,2=CLOSING,3=CLOSED)');
-            }, 5000);
-          };
-          
-          ws.onmessage = (event) => {
-            const isString = (typeof event.data === 'string');
-            alert('[TTM] Config payload (raw):\n' + (isString ? event.data : '[binary frame]'));
-          
-            if (!isString) {
-              alert('[TTM] Config payload não é texto (esperado JSON string)');
-              return;
-            }
-          
-            let data;
-            try {
-              data = JSON.parse(event.data);
-            } catch (e) {
-              alert('[TTM] JSON parse error:\n' + e.message);
-              return;
-            }
-          
-            alert('[TTM] Config.metadata:\n' + JSON.stringify(data && data.metadata, null, 2));
-            ws.close();
-            resolve(data);
-          };
-          
-          ws.onerror = (error) => {
-            alert('[TTM] Erro no WS de config');
-            ws.close();
-            reject(new Error("Falha ao carregar configuração via WebSocket"));
-          };
-          
-          ws.onclose = (event) => {
-            alert('[TTM] Config WS CLOSE: code=' + event.code + ', reason=' + (event.reason || '(empty)'));
-          };
+            let timeoutId;
+
+            const onMessage = (event) => {
+              try {
+                const data = JSON.parse(event.data);
+                if(data && (data.type === 'config:response' || data.type === 'metadata')) {
+                  this.ws.removeEventListener('message', onMessage);
+                  clearTimeout(timeoutId);
+                  resolve(data.data ?? data);
+                }
+              } catch (_) {}
+            };
+            
+            this.ws.addEventListener('message', onMessage);
+
+            this.ws.send(JSON.stringify({
+              type: 'config:request',
+              session_id: this.sessionId,
+              thread_id: this.threadId || null
+            }))
+            timeoutId = setTimeout(() => {
+              this.ws.removeEventListener('message', onMessage);
+              reject(new Error('Timeout ao obter configuração via WebSocket'));
+            }, 10000);
+          } catch (err) {
+            reject(err);
+          }
         });
       }
 
@@ -883,12 +878,6 @@
       _createUI() {
             const isDark = this.theme.theme === "dark";
             const primaryColor = this.theme.color || "#000000";
-            alert('[TTM] _createUI(): isDark=' + isDark +
-                  ', primaryColor=' + primaryColor +
-                  ', icon=' + this.theme.icon +
-                  ', name=' + this.theme.name +
-                  ', logo_url=' + this.theme.logo_url +
-                  ', wallpaper_url=' + this.theme.wallpaper_url);
             this._injectCustomStyles();
             this.container = document.createElement("div");
             this.container.id = "ttm-chat-container";
