@@ -126,12 +126,17 @@
 
       _connectWebSocket() {
         const wsUrl = `${this.wsUrl}/ws/${this.sessionId}/${this.threadId || 'new'}?token=${this.token}`;
+        alert("URL DO WS: " + wsUrl);
         this.ws = new WebSocket(wsUrl);
   
         this.ws.onopen = () => {
           if (!this.messagesLoaded) {
             this._loadMessages();
           }
+        };
+
+        this.ws.onerror = (e) => {
+          alert('TTM: WS error: ' + e);
         };
   
         this.ws.onmessage = (event) => {
