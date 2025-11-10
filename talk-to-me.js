@@ -826,6 +826,17 @@
           
           ws.onopen = () => {
             alert('[TTM] Config WS OPEN');
+          
+            // solicita explicitamente a configuração
+            try {
+              const probe = { type: 'get_config', session_id: this.sessionId };
+              ws.send(JSON.stringify(probe));
+              alert('[TTM] Enviado get_config:\n' + JSON.stringify(probe, null, 2));
+            } catch (e) {
+              alert('[TTM] Falha ao enviar get_config: ' + e.message);
+            }
+          
+            // se nada chegar, avisa após 5s
             setTimeout(() => {
               alert('[TTM] Nenhum payload recebido após 5s. readyState=' + ws.readyState + ' (0=CONNECTING,1=OPEN,2=CLOSING,3=CLOSED)');
             }, 5000);
