@@ -4,6 +4,9 @@
   "description": "",
   "main": "build.js",
   "scripts": {
+    "build:css": "postcss src/tailwind.css -o talk-to-me-chat.css --no-map",
+    "build:js": "node build.js",
+    "build": "npm run build:css && npm run build:js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,5 +22,12 @@
   "homepage": "https://github.com/ExplorerSoftware/widget-body#readme",
   "dependencies": {
     "terser": "^5.44.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.17",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "tailwindcss": "^4.1.17"
   }
 }

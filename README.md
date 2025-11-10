@@ -5,8 +5,8 @@ Widget de chat em tempo real usando WebSocket.
 ## 📦 Instalação
 
 ### Via CDN
-
 ```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ExplorerSoftware/widget-body@main/talk-to-me-chat.css">
 <script src="https://cdn.jsdelivr.net/gh/ExplorerSoftware/widget-body@main/talk-to-me-chat.min.js"></script>
 ```
 
@@ -17,6 +17,8 @@ Widget de chat em tempo real usando WebSocket.
 <html>
 <head>
     <title>Meu Site</title>
+    <!-- CSS do widget (compilado com Tailwind, sem CDN em produção) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ExplorerSoftware/widget-body@main/talk-to-me-chat.css">
 </head>
 <body>
     <h1>Meu Site</h1>
@@ -102,15 +104,15 @@ npm install
 ```
 
 ### Build
-
 ```bash
-node build.js
+npm run build
 ```
 
 O script irá:
-1. Ler o arquivo `talk-to-me.js`
-2. Minificar usando Terser
-3. Gerar `talk-to-me-chat.min.js`
+1. Compilar o CSS do Tailwind para `talk-to-me-chat.css`
+2. Ler o arquivo `talk-to-me.js`
+3. Minificar usando Terser
+4. Gerar `talk-to-me-chat.min.js`
 
 ## 📝 Changelog
 

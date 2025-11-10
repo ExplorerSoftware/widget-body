@@ -54,35 +54,14 @@
         if (this.librariesLoaded) return;
   
         try {
-          await Promise.all([this._loadTailwind(), this._loadFramerMotion(), this._loadLucide()]);
+          await Promise.all([this._loadFramerMotion(), this._loadLucide()]);
           this.librariesLoaded = true;
         } catch (error) {
           console.error("Erro ao carregar bibliotecas:", error);
         }
       }
   
-      _loadTailwind() {
-        return new Promise((resolve, reject) => {
-          if (document.querySelector('script[src*="tailwindcss"]')) {
-            resolve();
-            return;
-          }
-          const script = document.createElement("script");
-          script.src = "https://cdn.tailwindcss.com";
-          script.onload = () => {
-            if (window.tailwind) {
-              window.tailwind.config = {
-                corePlugins: {
-                  preflight: false,
-                },
-              };
-            }
-            resolve();
-          };
-          script.onerror = () => reject(new Error("Falha ao carregar Tailwind CSS"));
-          document.head.appendChild(script);
-        });
-      }
+      // Tailwind CSS is built via CLI and must be included by the host page.
   
       _loadFramerMotion() {
         return new Promise((resolve, reject) => {
