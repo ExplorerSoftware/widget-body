@@ -230,6 +230,7 @@
   
         this.ws.send(JSON.stringify({
           type: 'send_message',
+          token: this.token,
           user_id: this.userIdentifier,
           text: text || null,
           files: filesData,
