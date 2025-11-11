@@ -33,32 +33,28 @@
         await this._loadLibraries();
         const config = await this._fetchConfig();
         
-        // Ajustar para extrair widget_style corretamente
         if (config.widget_style) {
           this.theme = {
             ...config.widget_style,
-            theme: config.widget_style.theme || "light", // assumir light se não vier
-            name: config.widget_style.name || "Chat", // valor padrão
+            theme: config.widget_style.theme || "dark", 
+            name: config.widget_style.name || "Chat", 
             logo_url: config.widget_style.logo_url || null,
             wallpaper_url: config.widget_style.wallpaper_url || null,
           };
         } else if (config.metadata) {
           this.theme = config.metadata;
         } else {
-          // Fallback caso não venha no formato esperado
           this.theme = {
-            theme: "light",
-            color: config.color || "#000000",
+            theme: "dark",
+            color: config.color || "#151619",
             icon: config.icon || "message-circle",
             name: config.name || "Chat",
             logo_url: config.logo_url || null,
             wallpaper_url: config.wallpaper_url || null,
           };
         }
-        
         this._createUI();
       }
-
 
       _generateSessionId() {
         return 'session_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
@@ -166,7 +162,6 @@
         this.ws.onmessage = (event) => {
           const data = JSON.parse(event.data);
   
-          // Tratar mensagem de metadata para atualizar o tema
           if (data.type === "metadata" && data.data) {
             if (data.data.widget_style) {
               this.theme = {
@@ -177,12 +172,11 @@
                 wallpaper_url: data.data.widget_style.wallpaper_url || this.theme?.wallpaper_url || null,
               };
               
-              // Se o chat já foi criado, atualizar a UI
               if (this.container) {
                 this._updateUIWithNewTheme();
               }
             }
-            return; // Não processar como mensagem normal
+            return;
           }
 
           if (data.type === "message" && data.data) {
@@ -898,9 +892,7 @@
                   this.ws.removeEventListener('message', onMessage);
                   clearTimeout(timeoutId);
                   
-                  // Extrair dados corretamente baseado no formato recebido
                   if (data.type === 'metadata' && data.data) {
-                    // Se vier com widget_style dentro de data
                     if (data.data.widget_style) {
                       resolve(data.data);
                     } else {
@@ -1513,7 +1505,6 @@
         const primaryColor = this.theme.color || "#000000";
         const iconName = this.theme.icon || "message-circle";
         
-        // Atualizar ícone do botão
         const iconElement = this.buttonIcon?.querySelector('[data-lucide]');
         if (iconElement) {
           iconElement.setAttribute('data-lucide', iconName);
@@ -1521,21 +1512,18 @@
           this.lucide?.createIcons();
         }
         
-        // Atualizar cores do header
         const header = this.chatContent?.querySelector('.p-1');
         if (header) {
           header.style.background = primaryColor;
         }
         
-        // Atualizar logo se existir
         if (this.theme.logo_url) {
           const logoImg = this.chatContent?.querySelector('img[alt="Logo"]');
           if (logoImg) {
             logoImg.src = this.theme.logo_url;
           }
         }
-        
-        // Atualizar nome
+          
         const nameElement = this.chatContent?.querySelector('h3');
         if (nameElement) {
           nameElement.textContent = this.theme.name || "Chat";
