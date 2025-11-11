@@ -230,12 +230,14 @@
   
         this.ws.send(JSON.stringify({
           type: 'send_message',
-          token: this.token,
-          user_id: this.userIdentifier,
-          text: text || null,
-          files: filesData,
-          metadata: {},
-          thread_id: this.threadId
+          data: {
+            token: this.token,
+            user_id: this.userIdentifier,
+            text: text || null,
+            files: filesData,
+            metadata: {},
+            thread_id: this.threadId
+          }
         }));
       }
 
