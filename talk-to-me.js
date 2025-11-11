@@ -32,12 +32,13 @@
       async init() {
         await this._loadLibraries();
         const config = await this._fetchConfig();
-        
+        this.name = config.name || "Chat";
+
         if (config.widget_style) {
           this.theme = {
             ...config.widget_style,
+            name: config.name || "Chat",
             theme: config.widget_style.theme || "dark", 
-            name: config.widget_style.name || "Chat", 
             logo_url: config.widget_style.logo_url || null,
             wallpaper_url: config.widget_style.wallpaper_url || null,
           };
@@ -46,9 +47,9 @@
         } else {
           this.theme = {
             theme: "dark",
+            name: config.name || "Chat",
             color: config.color || "#151619",
             icon: config.icon || "message-circle",
-            name: config.name || "Chat",
             logo_url: config.logo_url || null,
             wallpaper_url: config.wallpaper_url || null,
           };
@@ -167,7 +168,6 @@
               this.theme = {
                 ...data.data.widget_style,
                 theme: data.data.widget_style.theme || this.theme?.theme || "light",
-                name: data.data.widget_style.name || this.theme?.name || "Chat",
                 logo_url: data.data.widget_style.logo_url || this.theme?.logo_url || null,
                 wallpaper_url: data.data.widget_style.wallpaper_url || this.theme?.wallpaper_url || null,
               };
@@ -1523,7 +1523,7 @@
             logoImg.src = this.theme.logo_url;
           }
         }
-          
+
         const nameElement = this.chatContent?.querySelector('h3');
         if (nameElement) {
           nameElement.textContent = this.theme.name || "Chat";
