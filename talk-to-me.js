@@ -43,7 +43,10 @@
             wallpaper_url: config.widget_style.wallpaper_url || null,
           };
         } else if (config.metadata) {
-          this.theme = config.metadata;
+          this.theme = {
+            ...config.metadata,
+            name: config.name || "Chat",
+          };
         } else {
           this.theme = {
             theme: "dark",
@@ -893,11 +896,12 @@
                   clearTimeout(timeoutId);
                   
                   if (data.type === 'metadata' && data.data) {
-                    if (data.data.widget_style) {
-                      resolve(data.data);
-                    } else {
-                      resolve(data.data);
-                    }
+                    // Incluir o name do nível raiz no objeto retornado
+                    const configData = {
+                      ...data.data,
+                      name: data.name || data.data.name
+                    };
+                    resolve(configData);
                   } else {
                     resolve(data.data ?? data);
                   }
