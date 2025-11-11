@@ -209,6 +209,8 @@
 
       async _sendMessage(textOverride = null, files = null) {
         const text = textOverride || this.inputField.value;
+        const origin = window.location.hostname || window.location.host || '';
+        const username = `user_${this.userIdentifier}_${origin}`;
         
         if (!text && !files) return;
   
@@ -227,15 +229,20 @@
           this._connectWebSocket();
           await new Promise(resolve => setTimeout(resolve, 1000));
         }
+
+        
   
         this.ws.send(JSON.stringify({
           type: 'send_message',
           data: {
             token: this.token,
+            name: username,
             user_id: this.userIdentifier,
             text: text || null,
             files: filesData,
-            metadata: {},
+            metadata: {
+              origin: origin
+            },
             thread_id: this.threadId
           }
         }));
