@@ -191,6 +191,8 @@
                 this._unreadCount++;
                 this._updateNotificationCounter();
               }
+            } else {
+              this.pendingWebSocketMessages.push(message);
             }
           }
   
@@ -230,8 +232,6 @@
           await new Promise(resolve => setTimeout(resolve, 1000));
         }
 
-        
-  
         this.ws.send(JSON.stringify({
           type: 'send_message',
           data: {
@@ -800,10 +800,9 @@
           thread_id: this.threadId
         }));
         
-        // Aguardar resposta via onmessage
         const checkMessages = (event) => {
           const data = JSON.parse(event.data);
-          if (data.type === 'messages_history') {
+          if (data.type === 'message') {
             data.messages.forEach(message => {
               this._enqueueMessage(message, false);
             });
@@ -899,14 +898,13 @@
             let timeoutId;
 
             const onMessage = (event) => {
-              try {
                 const data = JSON.parse(event.data);
+
                 if (data && (data.type === 'config:response' || data.type === 'metadata')) {
                   this.ws.removeEventListener('message', onMessage);
                   clearTimeout(timeoutId);
                   
                   if (data.type === 'metadata' && data.data) {
-                    // Incluir o name do nível raiz no objeto retornado
                     const configData = {
                       ...data.data,
                       name: data.name || data.data.name
@@ -916,9 +914,7 @@
                     resolve(data.data ?? data);
                   }
                 }
-              } catch (error) {
-                console.error('Erro ao processar mensagem de config:', error);
-              }
+        
             };
 
             const sendRequest = () => {
