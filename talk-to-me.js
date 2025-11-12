@@ -802,8 +802,9 @@
         
         const checkMessages = (event) => {
           const data = JSON.parse(event.data);
-          if (data.type === 'message') {
-            data.messages.forEach(message => {
+          if (data.type === 'messages' || (data.type === 'message' && Array.isArray(data.messages))) {
+            const messages = data.messages || [];
+            messages.forEach(message => {
               this._enqueueMessage(message, false);
             });
             this.messagesLoaded = true;
