@@ -794,39 +794,9 @@
 
       async _loadMessages() {
         if (this.messagesLoaded) return;
-      
-        this.ws.send(JSON.stringify({
-          type: 'get_messages',
-          thread_id: this.threadId
-        }));
-        
-        const checkMessages = (event) => {
-          const data = JSON.parse(event.data);
-          
-          const isHistoryResponse = (data.type === 'messages') || 
-                                    (data.type === 'message' && Array.isArray(data.messages));
-          
-          if (isHistoryResponse) {
-            const messages = data.messages || data.data || [];
-            messages.forEach(message => {
-              this._enqueueMessage(message, false);
-            });
-            this.messagesLoaded = true;
-            this._processPendingMessages();
-            this.ws.removeEventListener('message', checkMessages);
-          }
-        };
-        
-        this.ws.addEventListener('message', checkMessages);
-        
-        setTimeout(() => {
-          if (!this.messagesLoaded) {
-            alert('TTM: Timeout ao carregar mensagens, marcando como carregado');
-            this.messagesLoaded = true;
-            this._processPendingMessages();
-            this.ws.removeEventListener('message', checkMessages);
-          }
-        }, 3000);
+
+        this.messagesLoaded = true;
+        this._processPendingMessages();
       }
 
       async _processMessageQueue() {
