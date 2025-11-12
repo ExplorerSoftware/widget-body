@@ -226,6 +226,18 @@
         if (files && files.length > 0) {
           filesData = await this._convertFilesToBase64(files);
         }
+
+        if (text || filesData.length > 0) {
+          const userMessage = {
+            text: text || null,
+            origin: "customer",
+            created_at: new Date().toISOString(),
+            timestamp: new Date().getTime(),
+            media: filesData.length > 0 ? filesData[0] : null
+          }
+          this._enqueueMessage(userMessage);
+          this._processMessageQueue();
+        }
   
         if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
           this._connectWebSocket();
