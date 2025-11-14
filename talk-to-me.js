@@ -885,65 +885,53 @@
       }
 
       async _fetchConfig() {
-        return new Promise((resolve, reject) => {
-          try {
-            if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
-              this._connectWebSocket();
-            }
+       const schemaName = this._extractSchemaNameFromToken(this.token);
 
-            let timeoutId;
+       const httpUrl = this.wsUrl.replace('wss://', 'https://').replace('ws://', 'http://');
 
-            const onMessage = (event) => {
-                const data = JSON.parse(event.data);
+       const response = await fetch(`${httpUrl}/webhook/widget:${schemaName}`, {
+        method: 'POST',
 
-                if (data && (data.type === 'config:response' || data.type === 'metadata')) {
-                  this.ws.removeEventListener('message', onMessage);
-                  clearTimeout(timeoutId);
-                  
-                  if (data.type === 'metadata' && data.data) {
-                    const configData = {
-                      ...data.data,
-                      name: data.name || data.data.name
-                    };
-                    resolve(configData);
-                  } else {
-                    resolve(data.data ?? data);
-                  }
-                }
-        
-            };
+        headers: {
+          'Content-Type': 'application/json',
+        },
 
-            const sendRequest = () => {
-              this.ws.send(JSON.stringify({
-                type: 'config:request',
-                token: this.token,
-                session_id: this.sessionId,
-                thread_id: this.threadId || null
-              }));
-            };
+        body: JSON.stringify({
+          token: this.token,
+        }),
+       });
 
-            this.ws.addEventListener('message', onMessage);
+       if (!response.ok) {
+        throw new Error('Failed to fetch config');
+       }
 
-            if (this.ws.readyState === WebSocket.OPEN) {
-              sendRequest();
-            } else {
-              const onOpen = () => {
-                this.ws.removeEventListener('open', onOpen);
-                sendRequest();
-              };
-              this.ws.addEventListener('open', onOpen);
-            }
+       const result = await response.json();
 
-            timeoutId = setTimeout(() => {
-              this.ws.removeEventListener('message', onMessage);
-              reject(new Error('Timeout ao obter configuração via WebSocket'));
-            }, 10000);
-          } catch (err) {
-            reject(err);
-          }
-        });
+       if (result.status === "ok" && result.type === "metadata") {
+        return {
+          name: result.name,
+          ...result.data,
+          metadata: result.data,
+          widget_style: result.data.widget_style
+        };
+       } else {
+        throw new Error('Invalid response from API');
+       }
       }
 
+
+      async _extractSchemaNameFromToken(token) {
+        try {
+          const parts = token.split(':');
+          if (parts.length === 2) {
+            return parts[1];
+          }
+          return null;
+        } catch (error) {
+          console.error('Erro ao extrair schema do token:', error);
+          return null;
+        }
+      }
       // ========================================
       // UI (from talk-to-me-ui.js)
       // ========================================
