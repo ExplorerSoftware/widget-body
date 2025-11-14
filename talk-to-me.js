@@ -885,7 +885,9 @@
       }
 
       async _fetchConfig() {
-       const schemaName = this._extractSchemaNameFromToken(this.token);
+       const schemaName = this._extractSchemaNameFromToken(this.token)
+
+       alert("ESSE É O TOKEN: " + this.token);
 
        const httpUrl = this.wsUrl.replace('wss://', 'https://').replace('ws://', 'http://');
 
