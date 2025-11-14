@@ -58,6 +58,7 @@
           };
         }
         this._createUI();
+        this._connectWebSocket();
       }
 
       _generateSessionId() {
@@ -1460,7 +1461,7 @@
             this.chatContent.style.pointerEvents = "auto";
             this._resetNotificationCounter();
 
-            if (this.threadId && !this.ws) {
+            if (!this.ws) {
                 this._connectWebSocket();
             }
             }
