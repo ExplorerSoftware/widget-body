@@ -925,16 +925,12 @@
 
 
       async _extractSchemaNameFromToken(token) {
-        try {
-          const parts = token.split(':');
-          if (parts.length === 2) {
-            return parts[1];
-          }
-          return null;
-        } catch (error) {
-          console.error('Erro ao extrair schema do token:', error);
-          return null;
+        const parts = token.split(':');
+        if (parts.length === 2) {
+          alert("ESSE É O SCHEMA NAME: " + parts[1]);
+          return parts[1];
         }
+
       }
       // ========================================
       // UI (from talk-to-me-ui.js)
