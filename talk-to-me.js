@@ -885,7 +885,7 @@
       }
 
       async _fetchConfig() {
-       const schemaName = this._extractSchemaNameFromToken(this.token)
+       const schemaName = await this._extractSchemaNameFromToken(this.token);
 
        alert("ESSE É O TOKEN: " + this.token);
 
