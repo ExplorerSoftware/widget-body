@@ -185,7 +185,8 @@
 
           if (data.type === "message" && data.data) {
             const message = data.data;
-            const threadId = data.thread_id;
+            const threadId = message.thread_id;
+            alert("TTM: Thread ID: " + threadId);
             if (threadId) {
               this.threadId = threadId;
               localStorage.setItem("ttm_thread_id", this.threadId);
