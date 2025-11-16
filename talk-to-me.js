@@ -183,15 +183,20 @@
             return;
           }
 
-          if (data.type === "history" && data.data && data.data.messages) {
-            alert(`TTM: Recebendo histórico com ${data.data.messages.length} mensagens`);
-            
-            // Processar mensagens do histórico
-            data.data.messages.forEach(message => {
-              // As mensagens do histórico não são "novas", então não devem ter animação
-              this.pendingWebSocketMessages.push(message);
-            });
-            
+          if (data.type === "history" && data.data) {
+            // Recebeu histórico de mensagens
+            const threadId = data.data.thread_id;
+            if (threadId) {
+              this.threadId = threadId;
+              localStorage.setItem("ttm_thread_id", this.threadId);
+            }
+
+            // Adicionar todas as mensagens do histórico nas mensagens pendentes
+            if (data.data.messages && Array.isArray(data.data.messages)) {
+              data.data.messages.forEach(message => {
+                this.pendingWebSocketMessages.push(message);
+              });
+            }
             return;
           }
 
@@ -817,8 +822,15 @@
       async _loadMessages() {
         if (this.messagesLoaded) return;
 
-        // Aguardar um pouco para garantir que o histórico chegue do servidor
-        if (this.threadId && this.pendingWebSocketMessages.length === 0) {
+        if (this.threadId && this.ws && this.ws.readyState === WebSocket.OPEN) {
+          this.ws.send(JSON.stringify({
+            type: 'history',
+            data: {
+              thread_id: this.threadId,
+              token: this.token
+            }
+          }));
+
           await new Promise(resolve => setTimeout(resolve, 500));
         }
 
