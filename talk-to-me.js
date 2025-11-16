@@ -805,6 +805,17 @@
       async _loadMessages() {
         if (this.messagesLoaded) return;
 
+        if (this.threadId && this.ws && this.ws.readyState === WebSocket.OPEN) {
+          this.ws.send(JSON.stringify({
+            type: 'history',
+            data: {
+              thread_id: this.threadId
+            }
+          }));
+
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+
         this.messagesLoaded = true;
         this._processPendingMessages();
       }
