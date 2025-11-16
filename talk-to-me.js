@@ -809,7 +809,8 @@
           this.ws.send(JSON.stringify({
             type: 'history',
             data: {
-              thread_id: this.threadId
+              thread_id: this.threadId,
+              token: this.token
             }
           }));
 
