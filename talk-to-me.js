@@ -185,6 +185,11 @@
 
           if (data.type === "message" && data.data) {
             const message = data.data;
+            const threadId = data.thread_id;
+            if (threadId) {
+              this.threadId = threadId;
+              localStorage.setItem("ttm_thread_id", this.threadId);
+            }
             if (this.messagesLoaded) {
               this._enqueueMessage(message, true);
   
@@ -201,10 +206,7 @@
             this._clearThreadData();
           }
 
-          if (data.type === "thread_created" && data.thread_id) {
-            this.threadId = data.thread_id;
-            localStorage.setItem("ttm_thread_id", this.threadId);
-          }
+     
         };
       }
 
