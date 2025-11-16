@@ -189,6 +189,7 @@
             if (threadId) {
               this.threadId = threadId;
               localStorage.setItem("ttm_thread_id", this.threadId);
+              alert("TTM: Thread ID: " + this.threadId);
             }
             if (this.messagesLoaded) {
               this._enqueueMessage(message, true);
