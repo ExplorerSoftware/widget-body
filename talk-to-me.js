@@ -197,10 +197,8 @@
             }
           }
   
-          if (data.type === "thread:action") {
-            if (data.data && data.data.action === "finish") {
-              this._clearThreadData();
-            } 
+          if (data.type === "finish") {
+            this._clearThreadData();
           }
 
           if (data.type === "thread_created" && data.thread_id) {
@@ -785,11 +783,6 @@
         }
 
       _clearThreadData() {
-        if (this.ws) {
-          this.ws.close();
-          this.ws = null;
-        }
-  
         localStorage.removeItem("ttm_thread_id");
         localStorage.removeItem("ttm_user_id");
   
