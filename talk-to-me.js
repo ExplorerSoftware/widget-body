@@ -27,6 +27,7 @@
         this.messagesQueue = [];
         this.isProcessingQueue = false;
         this._unreadCount = 0;
+        this._waitingForHistory = false;
       }
   
       async init() {
@@ -197,6 +198,9 @@
                 this.pendingWebSocketMessages.push(message);
               });
             }
+            
+            // Sinalizar que o histórico chegou
+            this._waitingForHistory = false;
             return;
           }
 
@@ -823,6 +827,9 @@
         if (this.messagesLoaded) return;
 
         if (this.threadId && this.ws && this.ws.readyState === WebSocket.OPEN) {
+          // Marcar que estamos esperando o histórico
+          this._waitingForHistory = true;
+          
           this.ws.send(JSON.stringify({
             type: 'history',
             data: {
@@ -831,7 +838,13 @@
             }
           }));
 
-          await new Promise(resolve => setTimeout(resolve, 500));
+          // Esperar até 3 segundos pelo histórico, ou até ele chegar
+          const maxWait = 3000;
+          const startTime = Date.now();
+          
+          while (this._waitingForHistory && (Date.now() - startTime) < maxWait) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
         }
 
         this.messagesLoaded = true;
