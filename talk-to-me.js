@@ -151,12 +151,10 @@
 
       _connectWebSocket() {
         const wsUrl = `${this.wsUrl}/ws/session:${this.sessionId}/${this.threadId || 'new'}?token=${this.token}`;
-        alert("URL DO WS: " + wsUrl);
         this.ws = new WebSocket(wsUrl);
   
         this.ws.onopen = () => {
           if (!this.messagesLoaded) {
-            alert('TTM: WS open');
             this._loadMessages();
           }
         };
@@ -207,11 +205,9 @@
           if (data.type === "message" && data.data) {
             const message = data.data;
             const threadId = message.thread_id;
-            alert("TTM: Thread ID: " + threadId);
             if (threadId) {
               this.threadId = threadId;
               localStorage.setItem("ttm_thread_id", this.threadId);
-              alert("TTM: Thread ID: " + this.threadId);
             }
             if (this.messagesLoaded) {
               this._enqueueMessage(message, true);
@@ -927,11 +923,7 @@
       async _fetchConfig() {
        const schemaName = await this._extractSchemaNameFromToken(this.token);
 
-       alert("ESSE É O TOKEN: " + this.token);
-
        const httpUrl = this.wsUrl.replace('wss://', 'https://').replace('ws://', 'http://');
-
-       alert("URL: " + `${httpUrl}/api/webhook/widget/${schemaName}`);
 
        const response = await fetch(`${httpUrl}/api/webhook/widget/${schemaName}`, {
         method: 'POST',
@@ -967,7 +959,6 @@
       async _extractSchemaNameFromToken(token) {
         const parts = token.split(':');
         if (parts.length === 2) {
-          alert("ESSE É O SCHEMA NAME: " + parts[1]);
           return parts[1];
         }
 
