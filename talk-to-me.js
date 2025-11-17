@@ -1060,64 +1060,64 @@
                         class="flex-1 p-2  flex flex-col gap-2 bg-transparent"
                     >
                     </div>
-                    <div
-                        id="ttm-drop-area"
-                        class="hidden absolute inset-0 z-50 flex items-center justify-center"
-                        style="background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);"
-                    >
-                        <div
-                        id="ttm-drop-zone"
-                        class="relative flex flex-col w-[90%] h-[40%] items-center border-2 border-dashed rounded-lg p-4"
-                        style="
-                            background: ${isDark ? '#1a1a1a' : '#ffffff'};
-                            border-color: ${isDark ? '#565656' : '#d1d5db'};
-                        "
-                        >
-                        <button
-                            id="ttm-close-drop"
-                            type="button"
-                            class="absolute top-2 right-2 w-8 h-8 rounded-full border-none bg-transparent flex items-center justify-center cursor-pointer"
-                        >
-                            <i
-                            data-lucide="x"
-                            style="width: 16px; height: 16px; color: ${isDark ? '#ffffff' : '#000000'};"
-                            ></i>
-                        </button>
-                        <div class="flex flex-col items-center justify-center gap-0">
-                            <div
-                            class="w-20 h-20 rounded-full flex items-center justify-center"
-                            style="background: ${isDark ? '#222222' : '#f3f4f6'};"
-                            >
-                            <i
-                                data-lucide="upload"
-                                style="width: 32px; height: 32px; color: ${isDark ? '#ffffff' : '#000000'};"
-                            ></i>
-                            </div>
-                            <div class="text-center mb-[1rem]">
-                            <p
-                                class="text-md font-semibold mb-1"
-                                style="color: ${isDark ? '#ffffff' : '#000000'};"
-                            >
-                                Arraste e solte seu arquivo
-                            </p>
-                            <p 
-                                class="text-xs" 
-                                style="color: ${isDark ? '#9ca3af' : '#6b7280'};"
-                            >
-                                ou clique para selecionar
-                            </p>
-                            </div>
-                            <button
-                            id="ttm-select-file"
-                            type="button"
-                            class="px-6 py-3 rounded-lg font-medium border-none cursor-pointer transition-opacity hover:opacity-90"
-                            style="background: ${isDark ? '#ffffff' : '#000000'}; color: ${isDark ? '#000000' : '#ffffff'};"
-                            >
-                            Selecionar arquivo
-                            </button>
-                        </div>
-                        </div>
-                    </div>
+                    // <div
+                    //     id="ttm-drop-area"
+                    //     class="hidden absolute inset-0 z-50 flex items-center justify-center"
+                    //     style="background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);"
+                    // >
+                    //     <div
+                    //     id="ttm-drop-zone"
+                    //     class="relative flex flex-col w-[90%] h-[40%] items-center border-2 border-dashed rounded-lg p-4"
+                    //     style="
+                    //         background: ${isDark ? '#1a1a1a' : '#ffffff'};
+                    //         border-color: ${isDark ? '#565656' : '#d1d5db'};
+                    //     "
+                    //     >
+                    //     <button
+                    //         id="ttm-close-drop"
+                    //         type="button"
+                    //         class="absolute top-2 right-2 w-8 h-8 rounded-full border-none bg-transparent flex items-center justify-center cursor-pointer"
+                    //     >
+                    //         <i
+                    //         data-lucide="x"
+                    //         style="width: 16px; height: 16px; color: ${isDark ? '#ffffff' : '#000000'};"
+                    //         ></i>
+                    //     </button>
+                    //     <div class="flex flex-col items-center justify-center gap-0">
+                    //         <div
+                    //         class="w-20 h-20 rounded-full flex items-center justify-center"
+                    //         style="background: ${isDark ? '#222222' : '#f3f4f6'};"
+                    //         >
+                    //         <i
+                    //             data-lucide="upload"
+                    //             style="width: 32px; height: 32px; color: ${isDark ? '#ffffff' : '#000000'};"
+                    //         ></i>
+                    //         </div>
+                    //         <div class="text-center mb-[1rem]">
+                    //         <p
+                    //             class="text-md font-semibold mb-1"
+                    //             style="color: ${isDark ? '#ffffff' : '#000000'};"
+                    //         >
+                    //             Arraste e solte seu arquivo
+                    //         </p>
+                    //         <p 
+                    //             class="text-xs" 
+                    //             style="color: ${isDark ? '#9ca3af' : '#6b7280'};"
+                    //         >
+                    //             ou clique para selecionar
+                    //         </p>
+                    //         </div>
+                    //         <button
+                    //         id="ttm-select-file"
+                    //         type="button"
+                    //         class="px-6 py-3 rounded-lg font-medium border-none cursor-pointer transition-opacity hover:opacity-90"
+                    //         style="background: ${isDark ? '#ffffff' : '#000000'}; color: ${isDark ? '#000000' : '#ffffff'};"
+                    //         >
+                    //         Selecionar arquivo
+                    //         </button>
+                    //     </div>
+                    //     </div>
+                    // </div>
                     <div class="p-2 flex-shrink-0">
                         <div
                         class="flex flex-col p-1 gap-0 border-2 rounded-[1rem]"
@@ -1149,18 +1149,18 @@
                             maxlength="1000"
                         ></textarea>
                         <div class="flex flex-row items-center justify-between w-full gap-2">
-                            <button
-                            type="button"
-                            id="ttm-file-button"
-                            class="w-8 h-8 flex items-center justify-center self-end m-1.5 border-none cursor-pointer transition-opacity hover:opacity-90 flex-shrink-0"
-                            style="background: transparent; color: ${isDark ? '#ffffff' : '#000000'};"
-                            aria-label="Enviar arquivo"
-                            >
-                            <i 
-                                data-lucide="paperclip" 
-                                style="width: 16px; height: 16px;"
-                            ></i>
-                            </button>
+                            // <button
+                            // type="button"
+                            // id="ttm-file-button"
+                            // class="w-8 h-8 flex items-center justify-center self-end m-1.5 border-none cursor-pointer transition-opacity hover:opacity-90 flex-shrink-0"
+                            // style="background: transparent; color: ${isDark ? '#ffffff' : '#000000'};"
+                            // aria-label="Enviar arquivo"
+                            // >
+                            // <i 
+                            //     data-lucide="paperclip" 
+                            //     style="width: 16px; height: 16px;"
+                            // ></i>
+                            // </button>
                             <button
                             id="ttm-send-button"
                             type="button"
@@ -1169,7 +1169,7 @@
                             aria-label="Enviar mensagem"
                             >
                             <i 
-                                data-lucide="audio-lines" 
+                                data-lucide="arrow-up" 
                                 style="width: 16px; height: 16px;"
                             ></i>
                             </button>
@@ -1272,13 +1272,13 @@
                 });
             }
 
-      _updateSendButtonIcon() {
-            const hasText = this.inputField?.value.length > 0;
-            const hasFiles = this.selectedFiles && this.selectedFiles.length > 0;
-            const newIcon = (hasText || hasFiles) ? 'arrow-up' : 'audio-lines';
-            this.sendButton.innerHTML = `<i data-lucide="${newIcon}" style="width: 16px; height: 16px;"></i>`;
-            this.lucide.createIcons();
-            }
+      // _updateSendButtonIcon() {
+      //       const hasText = this.inputField?.value.length > 0;
+      //       const hasFiles = this.selectedFiles && this.selectedFiles.length > 0;
+      //       const newIcon = (hasText || hasFiles) ? 'arrow-up' : 'audio-lines';
+      //       this.sendButton.innerHTML = `<i data-lucide="${newIcon}" style="width: 16px; height: 16px;"></i>`;
+      //       this.lucide.createIcons();
+      //       }
 
       _visualizer() {
             const visualizerOverlay = document.createElement('div');
