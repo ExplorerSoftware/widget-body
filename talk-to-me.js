@@ -40,8 +40,8 @@
             ...config.widget_style,
             name: config.name || "Chat",
             theme: config.widget_style.theme || "dark", 
-            logo_url: config.widget_style.logo_url || null,
-            wallpaper_url: config.widget_style.wallpaper_url || null,
+            logo_url: config.widget_style.logo || null,
+            wallpaper_url: config.widget_style.wallpaper || null,
           };
         } else if (config.metadata) {
           this.theme = {
@@ -54,8 +54,8 @@
             name: config.name || "Chat",
             color: config.color || "#151619",
             icon: config.icon || "message-circle",
-            logo_url: config.logo_url || null,
-            wallpaper_url: config.wallpaper_url || null,
+            logo_url: config.logo || null,
+            wallpaper_url: config.wallpaper || null,
           };
         }
         this._createUI();
@@ -165,39 +165,21 @@
   
         this.ws.onmessage = (event) => {
           const data = JSON.parse(event.data);
-  
-          if (data.type === "metadata" && data.data) {
-            if (data.data.widget_style) {
-              this.theme = {
-                ...data.data.widget_style,
-                theme: data.data.widget_style.theme || this.theme?.theme || "light",
-                logo_url: data.data.widget_style.logo_url || this.theme?.logo_url || null,
-                wallpaper_url: data.data.widget_style.wallpaper_url || this.theme?.wallpaper_url || null,
-              };
-              
-              if (this.container) {
-                this._updateUIWithNewTheme();
-              }
-            }
-            return;
-          }
 
           if (data.type === "history" && data.data) {
-            // Recebeu histórico de mensagens
+
             const threadId = data.data.thread_id;
             if (threadId) {
               this.threadId = threadId;
               localStorage.setItem("ttm_thread_id", this.threadId);
             }
 
-            // Adicionar todas as mensagens do histórico nas mensagens pendentes
             if (data.data.messages && Array.isArray(data.data.messages)) {
               data.data.messages.forEach(message => {
                 this.pendingWebSocketMessages.push(message);
               });
             }
             
-            // Sinalizar que o histórico chegou
             this._waitingForHistory = false;
             return;
           }
