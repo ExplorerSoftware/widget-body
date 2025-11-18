@@ -1037,7 +1037,7 @@
                     </div>
                     <div
                     class="flex-1 flex overflow-y-auto flex-col"
-                    style="${primaryColor ? `background: ${primaryColor};` : this.theme.wallpaper_url ? `background-image: url(${this.theme.wallpaper_url}); background-size: cover; background-position: center;` : ''}"
+                    style="${this.theme.wallpaper_url ? `background-image: url(${this.theme.wallpaper_url}); background-size: cover; background-position: center;` : primaryColor ? `background: ${primaryColor};` : ''}"
                     >
                     <div
                         id="ttm-messages"
