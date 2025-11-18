@@ -234,7 +234,8 @@
         const origin = window.location.hostname || window.location.host || '';
         const username = `user_${this.userIdentifier}_${origin}`;
         
-        if (!text && !files) return;
+        // if (!text && !files) return;
+        if (!text) return;
   
         if (!textOverride) {
           this.inputField.value = "";
@@ -242,18 +243,19 @@
           this._updateSendButtonIcon();
         }
   
-        let filesData = [];
-        if (files && files.length > 0) {
-          filesData = await this._convertFilesToBase64(files);
-        }
+        // let filesData = [];
+        // if (files && files.length > 0) {
+        //   filesData = await this._convertFilesToBase64(files);
+        // }
 
-        if (text || filesData.length > 0) {
+        // if (text || filesData.length > 0) {
+        if (text) {
           const userMessage = {
             text: text || null,
             origin: "customer",
             created_at: new Date().toISOString(),
             timestamp: new Date().getTime(),
-            media: filesData.length > 0 ? filesData[0] : null
+            // media: filesData.length > 0 ? filesData[0] : null
           }
           this._enqueueMessage(userMessage);
           this._processMessageQueue();
@@ -271,7 +273,7 @@
             name: username,
             user_id: this.userIdentifier,
             text: text || null,
-            files: filesData,
+            // files: filesData,
             metadata: {
               origin: origin
             },
@@ -280,28 +282,28 @@
         }));
       }
 
-      async _convertFilesToBase64(files) {
-        const filesData = [];
-        for (const file of files) {
-          const base64 = await this._fileToBase64(file);
-          filesData.push({
-            name: file.name,
-            type: file.type,
-            size: file.size,
-            data: base64
-          });
-        }
-        return filesData;
-      }
+      // async _convertFilesToBase64(files) {
+      //   const filesData = [];
+      //   for (const file of files) {
+      //     const base64 = await this._fileToBase64(file);
+      //     filesData.push({
+      //       name: file.name,
+      //       type: file.type,
+      //       size: file.size,
+      //       data: base64
+      //     });
+      //   }
+      //   return filesData;
+      // }
 
-      _fileToBase64(file) {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = error => reject(error);
-        });
-      }
+      // _fileToBase64(file) {
+      //   return new Promise((resolve, reject) => {
+      //     const reader = new FileReader();
+      //     reader.readAsDataURL(file);
+      //     reader.onload = () => resolve(reader.result);
+      //     reader.onerror = error => reject(error);
+      //   });
+      // }
 
       _initAudioPlayers() {
           document.querySelectorAll('.ttm-audio-player').forEach(async (player) => {
@@ -530,278 +532,278 @@
         this.lucide.createIcons();
       }
 
-      _initFileHandlers() {
-  
-          if (this._fileHandlersInitialized) {
-            return;
-        }
-  
-        this.fileButton.addEventListener("click", () => {
-            this.dropArea.classList.remove("hidden");
-            this.lucide.createIcons();
-        })
-  
-        this.closeDropBtn.addEventListener("click", () => {
-            this.dropArea.classList.add("hidden")
-            this._resetFileSelection();
-        })
-  
-        this.dropArea.addEventListener("click", (e) => {
-            if (e.target === this.dropArea) {
-                this.dropArea.classList.add("hidden")
-                this._resetFileSelection();
-            }
-        })
-  
-        this.selectFileBtn.addEventListener("click", () => {
-            this.fileInput.click();
-        })
-  
-        this.dropZone.addEventListener("click", (e) => {
-            if (e.target === this.dropZone || e.target.closest("#ttm-drop-zone") && !e.target.closest("button")) {
-                this.fileInput.click();
-            }
-        })
-  
-        this.fileInput.addEventListener("change", (e) => {
-            const files = Array.from(e.target.files);
-            if (files.length > 0) {
-                this._handleMultipleFilesSelected(files);
-            }
-        })
-  
-        this.dropZone.addEventListener("drop", (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-  
-          this.dropZone.classList.remove("ttm-drag-over");
-          this.dragCounter = 0;
-  
-          const files = Array.from(e.dataTransfer.files);
-          if (files.length > 0) {
-            this._handleMultipleFilesSelected(files);
-          }
-        })
-  
-        this.dropZone.addEventListener("dragover", (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-  
-          this.dropZone.classList.add("ttm-drag-over");
-        })
-  
-        this.dropZone.addEventListener("dragenter", (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-  
-          this.dropZone.classList.add("ttm-drag-over");
-        })
-  
-        this.dropZone.addEventListener("dragleave", (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-  
-          if (e.target === this.dropZone) {
-            this.dropZone.classList.remove("ttm-drag-over");
-          }
-        })
-        this.dropZone.addEventListener("dragend", (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-  
-          this.dropZone.classList.remove("ttm-drag-over");
-        })
-  
-        if (this.removeFileBtn) {
-            this.removeFileBtn.addEventListener("click", () => {
-                this._resetFileSelection();
-            });
-        }
-  
-        this._fileHandlersInitialized = true;
-        }
+      // _initFileHandlers() {
+      //
+      //     if (this._fileHandlersInitialized) {
+      //       return;
+      //   }
+      //
+      //   this.fileButton.addEventListener("click", () => {
+      //       this.dropArea.classList.remove("hidden");
+      //       this.lucide.createIcons();
+      //   })
+      //
+      //   this.closeDropBtn.addEventListener("click", () => {
+      //       this.dropArea.classList.add("hidden")
+      //       this._resetFileSelection();
+      //   })
+      //
+      //   this.dropArea.addEventListener("click", (e) => {
+      //       if (e.target === this.dropArea) {
+      //           this.dropArea.classList.add("hidden")
+      //           this._resetFileSelection();
+      //       }
+      //   })
+      //
+      //   this.selectFileBtn.addEventListener("click", () => {
+      //       this.fileInput.click();
+      //   })
+      //
+      //   this.dropZone.addEventListener("click", (e) => {
+      //       if (e.target === this.dropZone || e.target.closest("#ttm-drop-zone") && !e.target.closest("button")) {
+      //           this.fileInput.click();
+      //       }
+      //   })
+      //
+      //   this.fileInput.addEventListener("change", (e) => {
+      //       const files = Array.from(e.target.files);
+      //       if (files.length > 0) {
+      //           this._handleMultipleFilesSelected(files);
+      //       }
+      //   })
+      //
+      //   this.dropZone.addEventListener("drop", (e) => {
+      //     e.preventDefault();
+      //     e.stopPropagation();
+      //
+      //     this.dropZone.classList.remove("ttm-drag-over");
+      //     this.dragCounter = 0;
+      //
+      //     const files = Array.from(e.dataTransfer.files);
+      //     if (files.length > 0) {
+      //       this._handleMultipleFilesSelected(files);
+      //     }
+      //   })
+      //
+      //   this.dropZone.addEventListener("dragover", (e) => {
+      //     e.preventDefault();
+      //     e.stopPropagation();
+      //
+      //     this.dropZone.classList.add("ttm-drag-over");
+      //   })
+      //
+      //   this.dropZone.addEventListener("dragenter", (e) => {
+      //     e.preventDefault();
+      //     e.stopPropagation();
+      //
+      //     this.dropZone.classList.add("ttm-drag-over");
+      //   })
+      //
+      //   this.dropZone.addEventListener("dragleave", (e) => {
+      //     e.preventDefault();
+      //     e.stopPropagation();
+      //
+      //     if (e.target === this.dropZone) {
+      //       this.dropZone.classList.remove("ttm-drag-over");
+      //     }
+      //   })
+      //   this.dropZone.addEventListener("dragend", (e) => {
+      //     e.preventDefault();
+      //     e.stopPropagation();
+      //
+      //     this.dropZone.classList.remove("ttm-drag-over");
+      //   })
+      //
+      //   if (this.removeFileBtn) {
+      //       this.removeFileBtn.addEventListener("click", () => {
+      //           this._resetFileSelection();
+      //       });
+      //   }
+      //
+      //   this._fileHandlersInitialized = true;
+      //   }
 
-      _initDropZoneHandlers() {
-        if (!this.chatContent) return;
-  
-        this.dragCounter = 0;
-        this.dragTimeout = null;
-  
-  
-        const isDragFiles = (e) => {
-          return e.dataTransfer && e.dataTransfer.types && e.dataTransfer.types.includes("Files");
-        }
-  
-        this.chatContent.addEventListener("dragenter", (e) => {
-          if (!isDragFiles(e)) return;
-  
-          e.preventDefault();
-          e.stopPropagation();
-  
-          this.dragCounter++;
-  
-          if (this.dragTimeout) {
-            clearTimeout(this.dragTimeout);
-            this.dragTimeout = null;
-          }
-  
-          if (this.dragCounter === 1 && this.dropArea.classList.contains("hidden")) {
-            this.dropArea.classList.remove("hidden");
-            this.lucide.createIcons();
-          }
-        })
-  
-        this.chatContent.addEventListener("dragleave", (e) => {
-          if (!isDragFiles(e)) return;
-  
-          e.preventDefault();
-          e.stopPropagation();
-  
-          this.dragCounter--;
-  
-          if (this.dragCounter <= 0) {
-            this.dragCounter = 0;
-  
-            if (this.dragTimeout) {
-              this.dragCounter = 0;
-  
-              if (this.dragTimeout) {
-                clearTimeout(this.dragTimeout);
-              }
-  
-              this.dragTimeout = setTimeout(() => {
-                if (this.dragCounter === 0 && this.dropArea.classList.contains("hidden")) {
-                  this.dropArea.classList.add("hidden");
-                  this.lucide.createIcons();
-                }
-              }, 100);
-            }
-          }
-        })
-  
-        this.chatContent.addEventListener("dragover", (e) => {
-          if (!isDragFiles(e)) return;
-            e.preventDefault();
-            e.stopPropagation();
-        })
-  
-        this.chatContent.addEventListener("drop", (e) => {
-          if (!isDragFiles(e)) return;
-  
-            e.preventDefault();
-            e.stopPropagation();
-  
-            this.dragCounter = 0;
-            if (this.dragTimeout) {
-              clearTimeout(this.dragTimeout);
-              this.dragTimeout = null;
-            }
-        })
-      }
+      // _initDropZoneHandlers() {
+      //   if (!this.chatContent) return;
+      //
+      //   this.dragCounter = 0;
+      //   this.dragTimeout = null;
+      //
+      //
+      //   const isDragFiles = (e) => {
+      //     return e.dataTransfer && e.dataTransfer.types && e.dataTransfer.types.includes("Files");
+      //   }
+      //
+      //   this.chatContent.addEventListener("dragenter", (e) => {
+      //     if (!isDragFiles(e)) return;
+      //
+      //     e.preventDefault();
+      //     e.stopPropagation();
+      //
+      //     this.dragCounter++;
+      //
+      //     if (this.dragTimeout) {
+      //       clearTimeout(this.dragTimeout);
+      //       this.dragTimeout = null;
+      //     }
+      //
+      //     if (this.dragCounter === 1 && this.dropArea.classList.contains("hidden")) {
+      //       this.dropArea.classList.remove("hidden");
+      //       this.lucide.createIcons();
+      //     }
+      //   })
+      //
+      //   this.chatContent.addEventListener("dragleave", (e) => {
+      //     if (!isDragFiles(e)) return;
+      //
+      //     e.preventDefault();
+      //     e.stopPropagation();
+      //
+      //     this.dragCounter--;
+      //
+      //     if (this.dragCounter <= 0) {
+      //       this.dragCounter = 0;
+      //
+      //       if (this.dragTimeout) {
+      //         this.dragCounter = 0;
+      //
+      //         if (this.dragTimeout) {
+      //           clearTimeout(this.dragTimeout);
+      //         }
+      //
+      //         this.dragTimeout = setTimeout(() => {
+      //           if (this.dragCounter === 0 && this.dropArea.classList.contains("hidden")) {
+      //             this.dropArea.classList.add("hidden");
+      //             this.lucide.createIcons();
+      //           }
+      //         }, 100);
+      //       }
+      //     }
+      //   })
+      //
+      //   this.chatContent.addEventListener("dragover", (e) => {
+      //     if (!isDragFiles(e)) return;
+      //       e.preventDefault();
+      //       e.stopPropagation();
+      //   })
+      //
+      //   this.chatContent.addEventListener("drop", (e) => {
+      //     if (!isDragFiles(e)) return;
+      //
+      //       e.preventDefault();
+      //       e.stopPropagation();
+      //
+      //       this.dragCounter = 0;
+      //       if (this.dragTimeout) {
+      //         clearTimeout(this.dragTimeout);
+      //         this.dragTimeout = null;
+      //       }
+      //   })
+      // }
 
-      _handleMultipleFilesSelected(files) {
-            this.selectedFiles = this.selectedFiles || [];
-            const startIndex = this.selectedFiles.length;
-            this.selectedFiles = [...this.selectedFiles, ...files];
-  
-            const previewContainer = document.getElementById("ttm-file-preview");
-            if (previewContainer) {
-  
-                files.forEach((file, index) => {
-                    const actualIndex = startIndex + index;
-                    const archiveWrapper = document.createElement('div');
-                    archiveWrapper.className = 'relative';
-                    const isDark = this.theme.theme === "dark";
-  
-                    let archive;
-  
-                    if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
-  
-                        archive = file.type.startsWith('image/') ? document.createElement('img') : document.createElement('video');
-                        archive.src = URL.createObjectURL(file);
-                        archive.alt = file.name;
-                        archive.className = 'w-full h-full object-cover rounded-md';
-                        archiveWrapper.style.cssText = 'width: 40px; height: 40px;';
-                        archiveWrapper.appendChild(archive);
-  
-                    } else if (file.type.startsWith('audio/')) {
-  
-                        archiveWrapper.style.cssText = `width: 40px; height: 40px; background: ${isDark ? '#e9e9e9' : '#1a1a1a'}; border-radius: 0.375rem;`;
-                        archive = document.createElement('div');
-                        archive.className = 'w-full h-full object-cover rounded-md';
-                        archive.id = `ttm-file-preview-${actualIndex}`;
-                        archiveWrapper.appendChild(archive);
-  
-                        const audioIcon = document.createElement('i');
-                        audioIcon.setAttribute('data-lucide', 'audio-lines');
-                        audioIcon.style.cssText = `position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; color: ${isDark ? '#000000' : '#ffffff'};`;
-                        archiveWrapper.appendChild(audioIcon);
-  
-                    } else {
-  
-                        archiveWrapper.style.cssText = `width: 40px; height: 40px; background: ${isDark ? '#e9e9e9' : '#1a1a1a'}; border-radius: 0.375rem;`;
-                        archive = document.createElement('div');
-                        archive.className = 'w-full h-full object-cover rounded-md';
-                        archive.id = `ttm-file-preview-${actualIndex}`;
-                        archiveWrapper.appendChild(archive);
-  
-                        const archiveIcon = document.createElement('i');
-                        archiveIcon.setAttribute('data-lucide', 'file');
-                        archiveIcon.style.cssText = `position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; color: ${isDark ? '#000000' : '#ffffff'};`;
-                        archiveWrapper.appendChild(archiveIcon);
-  
-                    }
-  
-                  const removeBtn = document.createElement('button');
-                  removeBtn.type = 'button';
-                  removeBtn.className = 'absolute top-[-9px] p-0 right-[-9px] w-5 h-5 rounded-full flex items-center justify-center cursor-pointer';
-                  removeBtn.style.cssText = 'border: solid 1px #ffffff; color: #ffffff; background: #ffffff; box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.8);';
-                  removeBtn.innerHTML = '<i data-lucide="x" style="width: 10px; height: 10px; color: #000000;"></i>';
-  
-                  removeBtn.addEventListener('click', () => {
-                    this.selectedFiles = this.selectedFiles.filter((_, i) => i !== actualIndex);
-                    archiveWrapper.remove();
-                    if (archive.src) {
-                      URL.revokeObjectURL(archive.src);
-                    }
-                    if (this.selectedFiles.length === 0) {
-                        previewContainer.classList.add("hidden");
-                        this.fileInput.value = "";
-                    }
-                    this._updateSendButtonIcon();
-                  }) 
-                    archiveWrapper.appendChild(removeBtn);
-                    previewContainer.appendChild(archiveWrapper);
-                })
-  
-                previewContainer.classList.remove("hidden");
-                this.lucide.createIcons();
-                this._updateSendButtonIcon();
-            }
-            this.dropArea.classList.add("hidden");
-        }
+      // _handleMultipleFilesSelected(files) {
+      //       this.selectedFiles = this.selectedFiles || [];
+      //       const startIndex = this.selectedFiles.length;
+      //       this.selectedFiles = [...this.selectedFiles, ...files];
+      //
+      //       const previewContainer = document.getElementById("ttm-file-preview");
+      //       if (previewContainer) {
+      //
+      //           files.forEach((file, index) => {
+      //               const actualIndex = startIndex + index;
+      //               const archiveWrapper = document.createElement('div');
+      //               archiveWrapper.className = 'relative';
+      //               const isDark = this.theme.theme === "dark";
+      //
+      //               let archive;
+      //
+      //               if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
+      //
+      //                   archive = file.type.startsWith('image/') ? document.createElement('img') : document.createElement('video');
+      //                   archive.src = URL.createObjectURL(file);
+      //                   archive.alt = file.name;
+      //                   archive.className = 'w-full h-full object-cover rounded-md';
+      //                   archiveWrapper.style.cssText = 'width: 40px; height: 40px;';
+      //                   archiveWrapper.appendChild(archive);
+      //
+      //               } else if (file.type.startsWith('audio/')) {
+      //
+      //                   archiveWrapper.style.cssText = `width: 40px; height: 40px; background: ${isDark ? '#e9e9e9' : '#1a1a1a'}; border-radius: 0.375rem;`;
+      //                   archive = document.createElement('div');
+      //                   archive.className = 'w-full h-full object-cover rounded-md';
+      //                   archive.id = `ttm-file-preview-${actualIndex}`;
+      //                   archiveWrapper.appendChild(archive);
+      //
+      //                   const audioIcon = document.createElement('i');
+      //                   audioIcon.setAttribute('data-lucide', 'audio-lines');
+      //                   audioIcon.style.cssText = `position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; color: ${isDark ? '#000000' : '#ffffff'};`;
+      //                   archiveWrapper.appendChild(audioIcon);
+      //
+      //               } else {
+      //
+      //                   archiveWrapper.style.cssText = `width: 40px; height: 40px; background: ${isDark ? '#e9e9e9' : '#1a1a1a'}; border-radius: 0.375rem;`;
+      //                   archive = document.createElement('div');
+      //                   archive.className = 'w-full h-full object-cover rounded-md';
+      //                   archive.id = `ttm-file-preview-${actualIndex}`;
+      //                   archiveWrapper.appendChild(archive);
+      //
+      //                   const archiveIcon = document.createElement('i');
+      //                   archiveIcon.setAttribute('data-lucide', 'file');
+      //                   archiveIcon.style.cssText = `position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; color: ${isDark ? '#000000' : '#ffffff'};`;
+      //                   archiveWrapper.appendChild(archiveIcon);
+      //
+      //               }
+      //
+      //             const removeBtn = document.createElement('button');
+      //             removeBtn.type = 'button';
+      //             removeBtn.className = 'absolute top-[-9px] p-0 right-[-9px] w-5 h-5 rounded-full flex items-center justify-center cursor-pointer';
+      //             removeBtn.style.cssText = 'border: solid 1px #ffffff; color: #ffffff; background: #ffffff; box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.8);';
+      //             removeBtn.innerHTML = '<i data-lucide="x" style="width: 10px; height: 10px; color: #000000;"></i>';
+      //
+      //             removeBtn.addEventListener('click', () => {
+      //               this.selectedFiles = this.selectedFiles.filter((_, i) => i !== actualIndex);
+      //               archiveWrapper.remove();
+      //               if (archive.src) {
+      //                 URL.revokeObjectURL(archive.src);
+      //               }
+      //               if (this.selectedFiles.length === 0) {
+      //                   previewContainer.classList.add("hidden");
+      //                   this.fileInput.value = "";
+      //               }
+      //               this._updateSendButtonIcon();
+      //             }) 
+      //               archiveWrapper.appendChild(removeBtn);
+      //               previewContainer.appendChild(archiveWrapper);
+      //           })
+      //
+      //           previewContainer.classList.remove("hidden");
+      //           this.lucide.createIcons();
+      //           this._updateSendButtonIcon();
+      //       }
+      //       this.dropArea.classList.add("hidden");
+      //   }
 
-      _resetFileSelection() {
-          this.selectedFiles = [];
-          this.fileInput.value = "";
-  
-          const previewContainer = document.getElementById("ttm-file-preview");
-          if (previewContainer) {
-              const archives = previewContainer.querySelectorAll("img, video, audio");
-              archives.forEach(archive => {
-                  if (archive.src && archive.src.startsWith("blob:")) {
-                      URL.revokeObjectURL(archive.src);
-                  }
-              });
-              previewContainer.innerHTML = "";
-              previewContainer.classList.add("hidden");
-          }
-          const dropZoneContent = this.dropZone?.querySelector(".flex.flex-col.items-center.justify-center.gap-0");
-          if (dropZoneContent) {
-            dropZoneContent.classList.remove("hidden");
-          }
-          this._updateSendButtonIcon();
-        }
+      // _resetFileSelection() {
+      //     this.selectedFiles = [];
+      //     this.fileInput.value = "";
+      //
+      //     const previewContainer = document.getElementById("ttm-file-preview");
+      //     if (previewContainer) {
+      //         const archives = previewContainer.querySelectorAll("img, video, audio");
+      //         archives.forEach(archive => {
+      //             if (archive.src && archive.src.startsWith("blob:")) {
+      //                 URL.revokeObjectURL(archive.src);
+      //             }
+      //         });
+      //         previewContainer.innerHTML = "";
+      //         previewContainer.classList.add("hidden");
+      //     }
+      //     const dropZoneContent = this.dropZone?.querySelector(".flex.flex-col.items-center.justify-center.gap-0");
+      //     if (dropZoneContent) {
+      //       dropZoneContent.classList.remove("hidden");
+      //     }
+      //     this._updateSendButtonIcon();
+      //   }
 
       _clearThreadData() {
         localStorage.removeItem("ttm_thread_id");
@@ -969,13 +971,13 @@
 
       _createUI() {
             const isDark = this.theme.theme === "dark";
-            const primaryColor = this.theme.color || "#000000";
+            const primaryColor = this.theme.color || "#151619";
             this._injectCustomStyles();
             this.container = document.createElement("div");
             this.container.id = "ttm-chat-container";
             this._visualizer();
 
-            const iconName = this.theme.icon;
+            const iconName = this.theme.icon || "message-circle";
 
             this.container.innerHTML = `
                     <div
@@ -1060,70 +1062,12 @@
                         class="flex-1 p-2  flex flex-col gap-2 bg-transparent"
                     >
                     </div>
-                    <div
-                        id="ttm-drop-area"
-                        class="hidden absolute inset-0 z-50 flex items-center justify-center"
-                        style="background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);"
-                    >
-                        <div
-                        id="ttm-drop-zone"
-                        class="relative flex flex-col w-[90%] h-[40%] items-center border-2 border-dashed rounded-lg p-4"
-                        style="
-                            background: ${isDark ? '#1a1a1a' : '#ffffff'};
-                            border-color: ${isDark ? '#565656' : '#d1d5db'};
-                        "
-                        >
-                        <button
-                            id="ttm-close-drop"
-                            type="button"
-                            class="absolute top-2 right-2 w-8 h-8 rounded-full border-none bg-transparent flex items-center justify-center cursor-pointer"
-                        >
-                            <i
-                            data-lucide="x"
-                            style="width: 16px; height: 16px; color: ${isDark ? '#ffffff' : '#000000'};"
-                            ></i>
-                        </button>
-                        <div class="flex flex-col items-center justify-center gap-0">
-                            <div
-                            class="w-20 h-20 rounded-full flex items-center justify-center"
-                            style="background: ${isDark ? '#222222' : '#f3f4f6'};"
-                            >
-                            <i
-                                data-lucide="upload"
-                                style="width: 32px; height: 32px; color: ${isDark ? '#ffffff' : '#000000'};"
-                            ></i>
-                            </div>
-                            <div class="text-center mb-[1rem]">
-                            <p
-                                class="text-md font-semibold mb-1"
-                                style="color: ${isDark ? '#ffffff' : '#000000'};"
-                            >
-                                Arraste e solte seu arquivo
-                            </p>
-                            <p 
-                                class="text-xs" 
-                                style="color: ${isDark ? '#9ca3af' : '#6b7280'};"
-                            >
-                                ou clique para selecionar
-                            </p>
-                            </div>
-                            <button
-                            id="ttm-select-file"
-                            type="button"
-                            class="px-6 py-3 rounded-lg font-medium border-none cursor-pointer transition-opacity hover:opacity-90"
-                            style="background: ${isDark ? '#ffffff' : '#000000'}; color: ${isDark ? '#000000' : '#ffffff'};"
-                            >
-                            Selecionar arquivo
-                            </button>
-                        </div>
-                        </div>
-                    </div>
                     <div class="p-2 flex-shrink-0">
                         <div
                         class="flex flex-col p-1 gap-0 border-2 rounded-[1rem]"
                         style="background: ${isDark ? '#212224' : '#d9d9d9'}; border: none;"
                         >
-                        <div
+                        <!-- <div
                             id="ttm-file-preview"
                             class="hidden flex flex-row items-start gap-2 w-full flex-wrap p-2"
                         >
@@ -1134,7 +1078,7 @@
                             class="hidden"
                             accept="image/*,video/*,audio/*,.pdf,.doc,.docx"
                             multiple
-                        />
+                        /> -->
                         <textarea
                             type="text"
                             id="ttm-input"
@@ -1149,7 +1093,7 @@
                             maxlength="1000"
                         ></textarea>
                         <div class="flex flex-row items-center justify-between w-full gap-2">
-                            <button
+                            <!-- <button
                             type="button"
                             id="ttm-file-button"
                             class="w-8 h-8 flex items-center justify-center self-end m-1.5 border-none cursor-pointer transition-opacity hover:opacity-90 flex-shrink-0"
@@ -1160,7 +1104,8 @@
                                 data-lucide="paperclip" 
                                 style="width: 16px; height: 16px;"
                             ></i>
-                            </button>
+                            </button> -->
+                            <div class="flex-1"></div>
                             <button
                             id="ttm-send-button"
                             type="button"
@@ -1169,7 +1114,7 @@
                             aria-label="Enviar mensagem"
                             >
                             <i 
-                                data-lucide="audio-lines" 
+                                data-lucide="arrow-up" 
                                 style="width: 16px; height: 16px;"
                             ></i>
                             </button>
@@ -1190,20 +1135,20 @@
                 this.sendButton = document.getElementById("ttm-send-button");
                 this.messagesContainer = document.getElementById("ttm-messages");
                 this.closeButton = document.getElementById("ttm-close-button"); 
-                this.fileInput = document.getElementById("ttm-file-input");
-                this.fileButton = document.getElementById("ttm-file-button");
-                this.dropArea = document.getElementById("ttm-drop-area");
-                this.dropZone = document.getElementById("ttm-drop-zone");
-                this.selectFileBtn = document.getElementById("ttm-select-file");
-                this.closeDropBtn = document.getElementById("ttm-close-drop");  
-                this.filePreview = document.getElementById("ttm-file-preview");
-                this.removeFileBtn = document.getElementById("ttm-remove-file");
-                this.selectedFile = null;
+                // this.fileInput = document.getElementById("ttm-file-input");
+                // this.fileButton = document.getElementById("ttm-file-button");
+                // this.dropArea = document.getElementById("ttm-drop-area");
+                // this.dropZone = document.getElementById("ttm-drop-zone");
+                // this.selectFileBtn = document.getElementById("ttm-select-file");
+                // this.closeDropBtn = document.getElementById("ttm-close-drop");  
+                // this.filePreview = document.getElementById("ttm-file-preview");
+                // this.removeFileBtn = document.getElementById("ttm-remove-file");
+                // this.selectedFile = null;
                 this.audioStream = null;
 
                 this.lucide.createIcons();
-                this._initFileHandlers();
-                this._initDropZoneHandlers();
+                // this._initFileHandlers();
+                // this._initDropZoneHandlers();
 
                 this.chatWindow.addEventListener("click", (e) => {
                     if (!this.isOpen) {
@@ -1222,24 +1167,26 @@
                     e.stopPropagation();
 
                     const hasText = this.inputField?.value.length > 0;
-                    const hasFiles = this.selectedFiles && this.selectedFiles.length > 0;
+                    // const hasFiles = this.selectedFiles && this.selectedFiles.length > 0;
 
                     if (this.activeRecorder && this.activeRecorder.state === 'recording') {
                     this.activeRecorder.stop();
                     return;
                     }
 
-                    if (hasText || hasFiles) {
-                    if (this.selectedFiles && this.selectedFiles.length > 0) {
-                        this._sendMessage(null, this.selectedFiles);
-                        this._resetFileSelection();
-                    } else {
+                    // if (hasText || hasFiles) {
+                    if (hasText) {
+                    // if (this.selectedFiles && this.selectedFiles.length > 0) {
+                    //     this._sendMessage(null, this.selectedFiles);
+                    //     this._resetFileSelection();
+                    // } else {
                         this._sendMessage();
-                    }
+                    // }
                     return;
                     }
 
-                    if (!hasText && !hasFiles && !this.activeRecorder) {
+                    // if (!hasText && !hasFiles && !this.activeRecorder) {
+                    if (!hasText && !this.activeRecorder) {
                     try {
                         if (!this.audioStream || !this.audioStream.active) {
                         this.audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -1255,12 +1202,12 @@
                 this.inputField?.addEventListener("keypress", (e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
-                    if (this.selectedFiles && this.selectedFiles.length > 0) {
-                        this._sendMessage(null, this.selectedFiles);
-                        this._resetFileSelection();
-                    } else {
+                    // if (this.selectedFiles && this.selectedFiles.length > 0) {
+                    //     this._sendMessage(null, this.selectedFiles);
+                    //     this._resetFileSelection();
+                    // } else {
                         this._sendMessage();
-                    }
+                    // }
                     }
                 });  
 
@@ -1274,8 +1221,9 @@
 
       _updateSendButtonIcon() {
             const hasText = this.inputField?.value.length > 0;
-            const hasFiles = this.selectedFiles && this.selectedFiles.length > 0;
-            const newIcon = (hasText || hasFiles) ? 'arrow-up' : 'audio-lines';
+            // const hasFiles = this.selectedFiles && this.selectedFiles.length > 0;
+            // const newIcon = (hasText || hasFiles) ? 'arrow-up' : 'audio-lines';
+            const newIcon = hasText ? 'arrow-up' : 'audio-lines';
             this.sendButton.innerHTML = `<i data-lucide="${newIcon}" style="width: 16px; height: 16px;"></i>`;
             this.lucide.createIcons();
             }
