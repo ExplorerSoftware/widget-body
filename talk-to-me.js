@@ -1206,7 +1206,7 @@
             // const hasFiles = this.selectedFiles && this.selectedFiles.length > 0;
             // const newIcon = (hasText || hasFiles) ? 'arrow-up' : 'audio-lines';
             // const newIcon = hasText ? 'arrow-up' : 'audio-lines';
-            this.sendButton.innerHTML = `<i data-lucide="${newIcon}" style="width: 16px; height: 16px;"></i>`;
+            // this.sendButton.innerHTML = `<i data-lucide="${newIcon}" style="width: 16px; height: 16px;"></i>`;
             this.lucide.createIcons();
             }
 
