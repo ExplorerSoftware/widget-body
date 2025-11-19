@@ -7,7 +7,15 @@
         if (!this.token) {
           throw new Error('TalkToMe: token é obrigatório. Configure no constructor: new TalkToMeChat({ token: "..." })');
         }
-        this.wsUrl = config.wsUrl
+
+        if (config.wsUrl) {
+          this.wsUrl =  config.wsUrl;
+        } else {
+          const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+          const host = window.location.host; 
+          this.wsUrl = `${protocol}//${host}`;
+        }
+
         this.theme = null;
         this.threadId = localStorage.getItem("ttm_thread_id") || null;
         this.ws = null;
@@ -29,7 +37,7 @@
         this._unreadCount = 0;
         this._waitingForHistory = false;
       }
-  
+      
       async init() {
         await this._loadLibraries();
         const config = await this._fetchConfig();
