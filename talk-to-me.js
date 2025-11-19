@@ -790,7 +790,10 @@
       _clearThreadData() {
         localStorage.removeItem("ttm_thread_id");
         localStorage.removeItem("ttm_user_id");
-        this.ws.close();
+        if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+          this.ws.close();
+        }
+        this.ws = null;
   
         this.threadId = null;
         this.messagesLoaded = false;
