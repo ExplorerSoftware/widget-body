@@ -154,9 +154,7 @@
         this.ws = new WebSocket(wsUrl);
   
         this.ws.onopen = () => {
-          if (!this.messagesLoaded) {
-            this._loadMessages();
-          }
+          this._loadMessages();
         };
 
         this.ws.onerror = (e) => {
@@ -187,9 +185,22 @@
           if (data.type === "message" && data.data) {
             const message = data.data;
             const threadId = message.thread_id;
-            if (threadId) {
+            if (threadId && this.threadId !== threadId) {
               this.threadId = threadId;
               localStorage.setItem("ttm_thread_id", this.threadId);
+
+              if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+                this.ws.send(JSON.stringify({
+                  type: "history",
+                  data: {
+                    thread_id: this.threadId,
+                    token: this.token
+                  }
+                }));
+              }
+
+              this.messagesLoaded = false;
+              this.pendingWebSocketMessages = [];
             }
             if (this.messagesLoaded) {
               this._enqueueMessage(message, true);
@@ -202,12 +213,9 @@
               this.pendingWebSocketMessages.push(message);
             }
           }
-  
           if (data.type === "finish") {
             this._clearThreadData();
           }
-
-     
         };
       }
 
@@ -787,20 +795,29 @@
       //     this._updateSendButtonIcon();
       //   }
 
-      _clearThreadData() {
-        localStorage.removeItem("ttm_thread_id");
-        localStorage.removeItem("ttm_user_id");
+      _closeWebSocket() {
         if (this.ws && this.ws.readyState === WebSocket.OPEN) {
           this.ws.close();
         }
         this.ws = null;
+      }
+
+      _clearThreadData() {
+        localStorage.removeItem("ttm_thread_id");
+
+
   
         this.threadId = null;
         this.messagesLoaded = false;
+        this._waitingForHistory = false;
         this.displayedMessages.clear();
         this.messagesQueue = [];
         this.pendingWebSocketMessages = [];
         this.userIdentifier = this._getUserIdentifier();
+
+
+        
+        this._updateNotificationCounter();
   
         if (this.messagesContainer) {
           this.messagesContainer.innerHTML = "";
