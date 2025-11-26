@@ -820,8 +820,6 @@
       async _loadMessages() {
         if (this.messagesLoaded) return;
 
-        alert(`_loadMessages: threadId=${this.threadId}, wsReady=${this.ws?.readyState === WebSocket.OPEN}`);
-
         if (this.threadId && this.ws && this.ws.readyState === WebSocket.OPEN) {
 
           this._waitingForHistory = true;
