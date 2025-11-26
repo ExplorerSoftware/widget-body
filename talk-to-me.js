@@ -923,7 +923,7 @@
 
        const httpUrl = this.wsUrl.replace('wss://', 'https://').replace('ws://', 'http://');
 
-       const response = await fetch(`${httpUrl}/api/webhook/widget/${schemaName}`, {
+       const response = await fetch(`${httpUrl}/api/widget/${schemaName}`, {
         method: 'POST',
 
         headers: {
