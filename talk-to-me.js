@@ -32,7 +32,7 @@
   
       async init() {
         await this._loadLibraries();
-        const config = await this._fetchConfig();
+        // const config = await this._fetchConfig();
         this.name = config.name || "Chat";
 
         if (config.widget_style) {
@@ -923,40 +923,40 @@
         }
       }
 
-      async _fetchConfig() {
-       const schemaName = await this._extractSchemaNameFromToken(this.token);
+      // async _fetchConfig() {
+      //  const schemaName = await this._extractSchemaNameFromToken(this.token);
 
-       const httpUrl = this.wsUrl.replace('wss://', 'https://').replace('ws://', 'http://');
+      //  const httpUrl = this.wsUrl.replace('wss://', 'https://').replace('ws://', 'http://');
 
-       const response = await fetch(`${httpUrl}/api/widget/${schemaName}`, {
-        method: 'POST',
+      //  const response = await fetch(`${httpUrl}/api/widget/${schemaName}`, {
+      //   method: 'POST',
 
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
 
-        body: JSON.stringify({
-          token: this.token,
-        }),
-       });
+      //   body: JSON.stringify({
+      //     token: this.token,
+      //   }),
+      //  });
 
-       if (!response.ok) {
-        throw new Error('Failed to fetch config');
-       }
+      //  if (!response.ok) {
+      //   throw new Error('Failed to fetch config');
+      //  }
 
-       const result = await response.json();
+      //  const result = await response.json();
 
-       if (result.status === "ok" && result.type === "metadata") {
-        return {
-          name: result.name,
-          ...result.data,
-          metadata: result.data,
-          widget_style: result.data.widget_style
-        };
-       } else {
-        throw new Error('Invalid response from API');
-       }
-      }
+      //  if (result.status === "ok" && result.type === "metadata") {
+      //   return {
+      //     name: result.name,
+      //     ...result.data,
+      //     metadata: result.data,
+      //     widget_style: result.data.widget_style
+      //   };
+      //  } else {
+      //   throw new Error('Invalid response from API');
+      //  }
+      // }
 
 
       async _extractSchemaNameFromToken(token) {
