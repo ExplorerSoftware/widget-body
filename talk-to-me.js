@@ -970,9 +970,7 @@
         }
 
       }
-      // ========================================
-      // UI (from talk-to-me-ui.js)
-      // ========================================
+
 
       _createUI() {
             const isDark = this.theme.theme === "dark";
@@ -1225,7 +1223,7 @@
             }
 
       _updateSendButtonIcon() {
-            const hasText = this.inputField?.value.length > 0;
+            // const hasText = this.inputField?.value.length > 0;
             // const hasFiles = this.selectedFiles && this.selectedFiles.length > 0;
             // const newIcon = (hasText || hasFiles) ? 'arrow-up' : 'audio-lines';
             // const newIcon = hasText ? 'arrow-up' : 'audio-lines';
