@@ -28,11 +28,13 @@
         this.isProcessingQueue = false;
         this._unreadCount = 0;
         this._waitingForHistory = false;
+        this._waitingForMetadata = false;  
+        this._metadataResponse = null; 
       }
   
       async init() {
         await this._loadLibraries();
-        // const config = await this._fetchConfig();
+        const config = await this._fetchConfig();
         this.name = config.name || "Chat";
 
         if (config.widget_style) {
@@ -923,40 +925,42 @@
         }
       }
 
-      // async _fetchConfig() {
-      //  const schemaName = await this._extractSchemaNameFromToken(this.token);
+      async _fetchConfig() {
+        if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+          await this._ensureWebSocketConnected();
+        }
 
-      //  const httpUrl = this.wsUrl.replace('wss://', 'https://').replace('ws://', 'http://');
 
-      //  const response = await fetch(`${httpUrl}/api/widget/${schemaName}`, {
-      //   method: 'POST',
-
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-
-      //   body: JSON.stringify({
-      //     token: this.token,
-      //   }),
-      //  });
-
-      //  if (!response.ok) {
-      //   throw new Error('Failed to fetch config');
-      //  }
-
-      //  const result = await response.json();
-
-      //  if (result.status === "ok" && result.type === "metadata") {
-      //   return {
-      //     name: result.name,
-      //     ...result.data,
-      //     metadata: result.data,
-      //     widget_style: result.data.widget_style
-      //   };
-      //  } else {
-      //   throw new Error('Invalid response from API');
-      //  }
-      // }
+        this._waitingForMetadata = true;
+        this._metadataResponse = null; 
+        
+        this.ws.send(JSON.stringify({
+          type: 'metadata',
+          data: {
+            token: this.token
+          }
+        }));
+      
+        const maxWait = 5000;
+        const startTime = Date.now();
+        
+        while (this._waitingForMetadata && (Date.now() - startTime) < maxWait) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      
+        if (!this._metadataResponse) {
+          throw new Error('Timeout ao buscar configuração do canal');
+        }
+      
+        const result = this._metadataResponse;
+        
+        return {
+          name: result.name,
+          ...result.data,
+          metadata: result.data,
+          widget_style: result.data.widget_style
+        };
+      }
 
 
       async _extractSchemaNameFromToken(token) {
