@@ -1164,10 +1164,10 @@
                     const hasText = this.inputField?.value.length > 0;
                     // const hasFiles = this.selectedFiles && this.selectedFiles.length > 0;
 
-                    if (this.activeRecorder && this.activeRecorder.state === 'recording') {
-                    this.activeRecorder.stop();
-                    return;
-                    }
+                    // if (this.activeRecorder && this.activeRecorder.state === 'recording') {
+                    // this.activeRecorder.stop();
+                    // return;
+                    // }
 
                     // if (hasText || hasFiles) {
                     if (hasText) {
@@ -1181,17 +1181,17 @@
                     }
 
                     // if (!hasText && !hasFiles && !this.activeRecorder) {
-                    if (!hasText && !this.activeRecorder) {
-                    try {
-                        if (!this.audioStream || !this.audioStream.active) {
-                        this.audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                        }
-                        this.activeRecorder = this._audioRecorder(this.audioStream);
-                    } catch (error) {
-                        this.audioStream = null;
-                        alert('Erro ao acessar o microfone. Verifique as permissões.');
-                    }
-                    }
+                    // if (!hasText && !this.activeRecorder) {
+                    //   try {
+                    //       if (!this.audioStream || !this.audioStream.active) {
+                    //       this.audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    //       }
+                    //       this.activeRecorder = this._audioRecorder(this.audioStream);
+                    //   } catch (error) {
+                    //       this.audioStream = null;
+                    //       alert('Erro ao acessar o microfone. Verifique as permissões.');
+                    //   }
+                    // }
                 });
 
                 this.inputField?.addEventListener("keypress", (e) => {
