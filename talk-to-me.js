@@ -154,6 +154,7 @@
         this.ws = new WebSocket(wsUrl);
   
         this.ws.onopen = () => {
+          alert('TTM: WebSocket conectado com sucesso!');
           if (!this.messagesLoaded) {
             this._loadMessages();
           }
@@ -162,9 +163,14 @@
         this.ws.onerror = (e) => {
           alert('TTM: WS error: ' + e);
         };
+
+        this.ws.onclose = (e) => {
+          alert('TTM: WebSocket fechado. Código: ' + e.code + ', Razão: ' + e.reason);
+        };
   
         this.ws.onmessage = (event) => {
           const data = JSON.parse(event.data);
+          alert('TTM: Mensagem recebida - Tipo: ' + data.type);
 
           if (data.type === "history" && data.data) {
 
