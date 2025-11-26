@@ -170,7 +170,7 @@
   
         this.ws.onmessage = (event) => {
           const data = JSON.parse(event.data);
-          alert('TTM: Mensagem recebida - Tipo: ' + data.type);
+          alert('TTM: Mensagem recebida  Tipo: ' + data.type);
 
           if (data.type === "history" && data.data) {
 
