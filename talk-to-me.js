@@ -820,8 +820,10 @@
       async _loadMessages() {
         if (this.messagesLoaded) return;
 
+        alert(`_loadMessages: threadId=${this.threadId}, wsReady=${this.ws?.readyState === WebSocket.OPEN}`);
+
         if (this.threadId && this.ws && this.ws.readyState === WebSocket.OPEN) {
-          // Marcar que estamos esperando o histórico
+
           this._waitingForHistory = true;
           
           this.ws.send(JSON.stringify({
@@ -832,7 +834,6 @@
             }
           }));
 
-          // Esperar até 3 segundos pelo histórico, ou até ele chegar
           const maxWait = 3000;
           const startTime = Date.now();
           
