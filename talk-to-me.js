@@ -28,8 +28,6 @@
         this.isProcessingQueue = false;
         this._unreadCount = 0;
         this._waitingForHistory = false;
-        this._waitingForMetadata = false;  
-        this._metadataResponse = null; 
       }
   
       async init() {
@@ -926,40 +924,38 @@
       }
 
       async _fetchConfig() {
-        if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
-          await this._ensureWebSocketConnected();
-        }
+       const schemaName = await this._extractSchemaNameFromToken(this.token);
 
+       const httpUrl = this.wsUrl.replace('wss://', 'https://').replace('ws://', 'http://');
 
-        this._waitingForMetadata = true;
-        this._metadataResponse = null; 
-        
-        this.ws.send(JSON.stringify({
-          type: 'metadata',
-          data: {
-            token: this.token
-          }
-        }));
-      
-        const maxWait = 5000;
-        const startTime = Date.now();
-        
-        while (this._waitingForMetadata && (Date.now() - startTime) < maxWait) {
-          await new Promise(resolve => setTimeout(resolve, 100));
-        }
-      
-        if (!this._metadataResponse) {
-          throw new Error('Timeout ao buscar configuração do canal');
-        }
-      
-        const result = this._metadataResponse;
-        
+       const response = await fetch(`${httpUrl}/api/widget/${schemaName}`, {
+        method: 'POST',
+
+        headers: {
+          'Content-Type': 'application/json',
+        },
+
+        body: JSON.stringify({
+          token: this.token,
+        }),
+       });
+
+       if (!response.ok) {
+        throw new Error('Failed to fetch config');
+       }
+
+       const result = await response.json();
+
+       if (result.status === "ok" && result.type === "metadata") {
         return {
           name: result.name,
           ...result.data,
           metadata: result.data,
           widget_style: result.data.widget_style
         };
+       } else {
+        throw new Error('Invalid response from API');
+       }
       }
 
 
@@ -970,7 +966,9 @@
         }
 
       }
-
+      // ========================================
+      // UI (from talk-to-me-ui.js)
+      // ========================================
 
       _createUI() {
             const isDark = this.theme.theme === "dark";
@@ -1223,7 +1221,7 @@
             }
 
       _updateSendButtonIcon() {
-            // const hasText = this.inputField?.value.length > 0;
+            const hasText = this.inputField?.value.length > 0;
             // const hasFiles = this.selectedFiles && this.selectedFiles.length > 0;
             // const newIcon = (hasText || hasFiles) ? 'arrow-up' : 'audio-lines';
             // const newIcon = hasText ? 'arrow-up' : 'audio-lines';
