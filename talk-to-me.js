@@ -32,32 +32,17 @@
   
       async init() {
         await this._loadLibraries();
-        const config = await this._fetchConfig();
-        this.name = config.name || "Chat";
-
-        if (config.widget_style) {
-          this.theme = {
-            ...config.widget_style,
-            name: config.name || "Chat",
-            theme: config.widget_style.theme || "dark", 
-            logo_url: config.widget_style.logo || null,
-            wallpaper_url: config.widget_style.wallpaper || null,
-          };
-        } else if (config.metadata) {
-          this.theme = {
-            ...config.metadata,
-            name: config.name || "Chat",
-          };
-        } else {
-          this.theme = {
-            theme: "dark",
-            name: config.name || "Chat",
-            color: config.color || "#151619",
-            icon: config.icon || "message-circle",
-            logo_url: config.logo || null,
-            wallpaper_url: config.wallpaper || null,
-          };
-        }
+        
+        // Inicializar com tema padrão (será atualizado quando os metadados chegarem via WebSocket)
+        this.theme = {
+          theme: "dark",
+          name: "Chat",
+          color: "#151619",
+          icon: "message-circle",
+          logo_url: null,
+          wallpaper_url: null,
+        };
+        
         this._createUI();
         this._connectWebSocket();
       }
@@ -151,35 +136,49 @@
 
       _connectWebSocket() {
         const wsUrl = `${this.wsUrl}/ws/session:${this.sessionId}/${this.threadId || 'new'}?token=${this.token}`;
+      
         this.ws = new WebSocket(wsUrl);
-  
+      
         this.ws.onopen = () => {
           alert('TTM: WebSocket conectado com sucesso!');
+          
+          // NOVO: Solicitar metadados logo após conectar
+          this._requestMetadata();
+          
           if (!this.messagesLoaded) {
             this._loadMessages();
           }
         };
-
+      
         this.ws.onerror = (e) => {
           alert('TTM: WS error: ' + e);
         };
-
+      
         this.ws.onclose = (e) => {
           alert('TTM: WebSocket fechado. Código: ' + e.code + ', Razão: ' + e.reason);
         };
-  
+      
         this.ws.onmessage = (event) => {
           const data = JSON.parse(event.data);
-          alert('TTM: Mensagem recebida  Tipo: ' + data.type);
-
+          alert('TTM: Mensagem recebida - Tipo: ' + data.type);
+          
+          if (data.type === "metadata" && data.data) {
+            this._handleMetadata(data.data);
+            return;
+          }
+          
+          if (data.type === "error") {
+            console.error('TTM Error:', data.error);
+            alert('TTM Error: ' + data.error);
+            return;
+          }
+          
           if (data.type === "history" && data.data) {
-
             const threadId = data.data.thread_id;
             if (threadId) {
               this.threadId = threadId;
               localStorage.setItem("ttm_thread_id", this.threadId);
             }
-
             if (data.data.messages && Array.isArray(data.data.messages)) {
               data.data.messages.forEach(message => {
                 this.pendingWebSocketMessages.push(message);
@@ -189,7 +188,7 @@
             this._waitingForHistory = false;
             return;
           }
-
+      
           if (data.type === "message" && data.data) {
             const message = data.data;
             const threadId = message.thread_id;
@@ -199,7 +198,7 @@
             }
             if (this.messagesLoaded) {
               this._enqueueMessage(message, true);
-  
+      
               if (!this.isOpen && message.origin !== "customer") {
                 this._unreadCount++;
                 this._updateNotificationCounter();
@@ -208,15 +207,100 @@
               this.pendingWebSocketMessages.push(message);
             }
           }
-  
+      
           if (data.type === "finish") {
             this._clearThreadData();
             this._closeWebSocket();
             this._connectWebSocket();
           }
-
-     
         };
+      }
+      
+
+      _requestMetadata() {
+        if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+          this.ws.send(JSON.stringify({
+            type: "metadata",
+            data: {
+              token: this.token
+            }
+          }));
+        }
+      }
+      
+      _handleMetadata(metadata) {
+        this.config = {
+          name: metadata.name,
+          ...metadata.data,
+          metadata: metadata.data,
+          widget_style: metadata.data.widget_style
+        };
+        
+        console.log('TTM: Configuração carregada via WebSocket', this.config);
+        
+        // Aplicar estilos apenas se widget_style existe
+        if (this.config.widget_style) {
+          this._applyWidgetStyles(this.config.widget_style);
+        }
+      }
+
+      _applyWidgetStyles(widgetStyle) {
+        // Atualizar o tema com os novos estilos
+        this.theme = {
+          ...this.theme,
+          ...widgetStyle,
+          name: this.config.name || this.theme.name,
+          theme: widgetStyle.theme || this.theme.theme,
+          color: widgetStyle.color || this.theme.color,
+          icon: widgetStyle.icon || this.theme.icon,
+          logo_url: widgetStyle.logo || this.theme.logo_url,
+          wallpaper_url: widgetStyle.wallpaper || this.theme.wallpaper_url,
+        };
+        
+        // Atualizar a UI com o novo tema
+        this._updateUIWithNewTheme();
+        
+        // Atualizar cores de fundo e outros elementos específicos
+        const isDark = this.theme.theme === "dark";
+        const primaryColor = this.theme.color || "#151619";
+        
+        // Atualizar header
+        const header = this.chatContent?.querySelector('.p-1');
+        if (header) {
+          header.style.background = primaryColor;
+        }
+        
+        // Atualizar background da área de mensagens
+        const messagesArea = this.chatContent?.querySelector('.flex-1.flex.overflow-y-auto');
+        if (messagesArea) {
+          if (this.theme.wallpaper_url) {
+            messagesArea.style.backgroundImage = `url(${this.theme.wallpaper_url})`;
+            messagesArea.style.backgroundSize = 'cover';
+            messagesArea.style.backgroundPosition = 'center';
+          } else {
+            messagesArea.style.background = primaryColor;
+          }
+        }
+        
+        // Atualizar cores dos elementos do input
+        const inputContainer = this.chatContent?.querySelector('.flex.flex-col.p-1.gap-0');
+        if (inputContainer) {
+          inputContainer.style.background = isDark ? '#212224' : '#d9d9d9';
+        }
+        
+        if (this.inputField) {
+          this.inputField.style.color = isDark ? '#ffffff' : '#000000';
+        }
+        
+        if (this.sendButton) {
+          this.sendButton.style.background = isDark ? '#ffffff' : '#000000';
+          this.sendButton.style.color = isDark ? '#000000' : '#ffffff';
+        }
+        
+        // Recriar ícones do Lucide
+        if (this.lucide) {
+          this.lucide.createIcons();
+        }
       }
 
       async _sendMessage(textOverride = null, files = null) {
@@ -923,40 +1007,6 @@
         }
       }
 
-      async _fetchConfig() {
-       const schemaName = await this._extractSchemaNameFromToken(this.token);
-
-       const httpUrl = this.wsUrl.replace('wss://', 'https://').replace('ws://', 'http://');
-
-       const response = await fetch(`${httpUrl}/api/widget/${schemaName}`, {
-        method: 'POST',
-
-        headers: {
-          'Content-Type': 'application/json',
-        },
-
-        body: JSON.stringify({
-          token: this.token,
-        }),
-       });
-
-       if (!response.ok) {
-        throw new Error('Failed to fetch config');
-       }
-
-       const result = await response.json();
-
-       if (result.status === "ok" && result.type === "metadata") {
-        return {
-          name: result.name,
-          ...result.data,
-          metadata: result.data,
-          widget_style: result.data.widget_style
-        };
-       } else {
-        throw new Error('Invalid response from API');
-       }
-      }
 
 
       async _extractSchemaNameFromToken(token) {
