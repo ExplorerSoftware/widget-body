@@ -28,6 +28,7 @@
         this.isProcessingQueue = false;
         this._unreadCount = 0;
         this._waitingForHistory = false;
+        this._permanentError = false;
       }
   
       async init() {
@@ -165,16 +166,34 @@
           alert('TTM: Erro na conexão WebSocket');
         };
       
-        this.ws.onclose = (e) => {
-          clearTimeout(connectionTimeout); 
-          console.log('TTM: WebSocket fechado. Código:', e.code, 'Razão:', e.reason);
+      this.ws.onclose = (e) => {
+        clearTimeout(connectionTimeout); 
+        console.log('TTM: WebSocket fechado. Código:', e.code, 'Razão:', e.reason);
+        
+        // Códigos 4000+ são erros permanentes - NÃO deve reconectar
+        if (e.code >= 4000) {
+          console.error('TTM: Erro permanente, não vai reconectar. Código:', e.code);
+          this.ws = null;
+          this._permanentError = true;  // Flag para evitar reconexões
           
-          if (e.code === 1006) {
-            alert('TTM: Conexão recusada - Canal pode estar inativo');
-          } else {
-            alert('TTM: WebSocket fechado. Código: ' + e.code + ', Razão: ' + e.reason);
-          }
-        };
+          // Mensagens específicas por código
+          const errorMessages = {
+            4001: 'Token não fornecido',
+            4002: 'Canal não encontrado', 
+            4003: 'Canal inativo'
+          };
+          alert('TTM: ' + (errorMessages[e.code] || 'Erro de conexão'));
+          return;
+        }
+        
+        if (e.code === 1006) {
+          alert('TTM: Conexão recusada - Canal pode estar inativo');
+        } else {
+          alert('TTM: WebSocket fechado. Código: ' + e.code + ', Razão: ' + e.reason);
+        }
+        
+        this.ws = null;
+      };
       
         this.ws.onmessage = (event) => {
           const data = JSON.parse(event.data);
@@ -346,6 +365,11 @@
         }
   
         if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+          // NÃO reconectar se houve erro permanente
+          if (this._permanentError) {
+            console.error('TTM: Não é possível enviar - erro permanente de conexão');
+            return;
+          }
           this._connectWebSocket();
           await new Promise(resolve => setTimeout(resolve, 1000));
         }
@@ -1500,7 +1524,7 @@
             this.chatContent.style.pointerEvents = "auto";
             this._resetNotificationCounter();
 
-            if (!this.ws) {
+            if (!this.ws && !this._permanentError) {
                 this._connectWebSocket();
             }
             }
