@@ -174,7 +174,7 @@
           }
           
           if (data.type === "history" && data.data) {
-            const threadId = data.data.thread_id;
+            const threadId = data.data.id;
             if (threadId) {
               this.threadId = threadId;
               localStorage.setItem("ttm_thread_id", this.threadId);
@@ -216,7 +216,6 @@
         };
       }
       
-
       _requestMetadata() {
         if (this.ws && this.ws.readyState === WebSocket.OPEN) {
           this.ws.send(JSON.stringify({
@@ -238,14 +237,13 @@
         
         console.log('TTM: Configuração carregada via WebSocket', this.config);
         
-        // Aplicar estilos apenas se widget_style existe
+
         if (this.config.widget_style) {
           this._applyWidgetStyles(this.config.widget_style);
         }
       }
 
       _applyWidgetStyles(widgetStyle) {
-        // Atualizar o tema com os novos estilos
         this.theme = {
           ...this.theme,
           ...widgetStyle,
@@ -257,20 +255,16 @@
           wallpaper_url: widgetStyle.wallpaper || this.theme.wallpaper_url,
         };
         
-        // Atualizar a UI com o novo tema
         this._updateUIWithNewTheme();
         
-        // Atualizar cores de fundo e outros elementos específicos
         const isDark = this.theme.theme === "dark";
         const primaryColor = this.theme.color || "#151619";
         
-        // Atualizar header
         const header = this.chatContent?.querySelector('.p-1');
         if (header) {
           header.style.background = primaryColor;
         }
         
-        // Atualizar background da área de mensagens
         const messagesArea = this.chatContent?.querySelector('.flex-1.flex.overflow-y-auto');
         if (messagesArea) {
           if (this.theme.wallpaper_url) {
@@ -282,7 +276,6 @@
           }
         }
         
-        // Atualizar cores dos elementos do input
         const inputContainer = this.chatContent?.querySelector('.flex.flex-col.p-1.gap-0');
         if (inputContainer) {
           inputContainer.style.background = isDark ? '#212224' : '#d9d9d9';
@@ -297,7 +290,6 @@
           this.sendButton.style.color = isDark ? '#000000' : '#ffffff';
         }
         
-        // Recriar ícones do Lucide
         if (this.lucide) {
           this.lucide.createIcons();
         }
