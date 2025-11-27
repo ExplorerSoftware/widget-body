@@ -135,7 +135,7 @@
       // ========================================
 
       _connectWebSocket() {
-        const wsUrl = `${this.wsUrl}/ws/session:${this.sessionId}/${this.threadId || 'new'}?token=${this.token}`;
+        const wsUrl = `${this.wsUrl}/ws/session:${this.sessionId}/${this.threadId}?token=${this.token}`;
       
         this.ws = new WebSocket(wsUrl);
       
