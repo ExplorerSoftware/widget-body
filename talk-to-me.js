@@ -136,13 +136,22 @@
 
       _connectWebSocket() {
         const wsUrl = `${this.wsUrl}/ws/session:${this.sessionId}/${this.threadId}?token=${this.token}`;
-      
+        
         this.ws = new WebSocket(wsUrl);
+        
+        const connectionTimeout = setTimeout(() => {
+          if (this.ws.readyState === WebSocket.CONNECTING) {
+            console.error('TTM: Timeout ao conectar WebSocket');
+            alert('TTM: Falha ao conectar - timeout');
+            this.ws.close();
+
+          }
+        }, 5000); 
       
         this.ws.onopen = () => {
+          clearTimeout(connectionTimeout); 
           alert('TTM: WebSocket conectado com sucesso!');
           
-          // NOVO: Solicitar metadados logo após conectar
           this._requestMetadata();
           
           if (!this.messagesLoaded) {
@@ -151,11 +160,20 @@
         };
       
         this.ws.onerror = (e) => {
-          alert('TTM: WS error: ' + e);
+          clearTimeout(connectionTimeout); 
+          console.error('TTM: WS error:', e);
+          alert('TTM: Erro na conexão WebSocket');
         };
       
         this.ws.onclose = (e) => {
-          alert('TTM: WebSocket fechado. Código: ' + e.code + ', Razão: ' + e.reason);
+          clearTimeout(connectionTimeout); 
+          console.log('TTM: WebSocket fechado. Código:', e.code, 'Razão:', e.reason);
+          
+          if (e.code === 1006) {
+            alert('TTM: Conexão recusada - Canal pode estar inativo');
+          } else {
+            alert('TTM: WebSocket fechado. Código: ' + e.code + ', Razão: ' + e.reason);
+          }
         };
       
         this.ws.onmessage = (event) => {
