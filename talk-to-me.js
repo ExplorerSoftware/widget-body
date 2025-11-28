@@ -155,7 +155,15 @@
         };
       
         this.ws.onclose = (e) => {
-          alert('TTM: WebSocket fechado. Código: ' + e.code + ', Razão: ' + e.reason);
+          console.log('TTM: WebSocket fechado. Código: ' + e.code);
+      
+          if (e.code === 4000) {
+            console.log('TTM: Canal inativo, não tentando reconectar');
+            this.ws = null;
+            return;
+          }
+          
+          this.ws = null;
         };
       
         this.ws.onmessage = (event) => {
