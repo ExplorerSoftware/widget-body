@@ -28,6 +28,7 @@
         this.isProcessingQueue = false;
         this._unreadCount = 0;
         this._waitingForHistory = false;
+        this.channelInactive = false; // ✅ Flag para indicar canal inativo
       }
   
       async init() {
@@ -138,8 +139,21 @@
         const wsUrl = `${this.wsUrl}/ws/session:${this.sessionId}/${this.threadId || 'new'}?token=${this.token}`;
       
         this.ws = new WebSocket(wsUrl);
+        
+        // ✅ Adicionar timeout para conexões que ficam pendentes
+        const connectionTimeout = setTimeout(() => {
+          if (this.ws && this.ws.readyState === WebSocket.CONNECTING) {
+            console.error('TTM: Timeout na conexão WebSocket - Canal pode estar inativo');
+            this.ws.close();
+            this.ws = null;
+            this.channelInactive = true; // ✅ Flag para indicar canal inativo
+            alert('Este canal de atendimento está temporariamente indisponível.');
+          }
+        }, 5000); // 5 segundos
       
         this.ws.onopen = () => {
+          clearTimeout(connectionTimeout);
+          this.channelInactive = false; // ✅ Canal está ativo
           alert('TTM: WebSocket conectado com sucesso!');
           
           // NOVO: Solicitar metadados logo após conectar
@@ -151,14 +165,18 @@
         };
       
         this.ws.onerror = (e) => {
-          alert('TTM: WS error: ' + e);
+          clearTimeout(connectionTimeout);
+          console.error('TTM: WS error:', e);
         };
       
         this.ws.onclose = (e) => {
+          clearTimeout(connectionTimeout);
           console.log('TTM: WebSocket fechado. Código: ' + e.code);
       
           if (e.code === 4000) {
             console.log('TTM: Canal inativo, não tentando reconectar');
+            this.channelInactive = true; // ✅ Marcar canal como inativo
+            alert('Este canal de atendimento está inativo no momento.');
             this.ws = null;
             return;
           }
@@ -310,7 +328,13 @@
         
         // if (!text && !files) return;
         if (!text) return;
-  
+
+        // ✅ NOVO: Verificar se o canal está inativo antes de tentar enviar
+        if (this.channelInactive) {
+          alert('Este canal de atendimento está inativo. Não é possível enviar mensagens.');
+          return;
+        }
+
         if (!textOverride) {
           this.inputField.value = "";
           this.inputField.style.height = "auto";
@@ -335,9 +359,15 @@
           this._processMessageQueue();
         }
   
+        // ✅ MODIFICADO: Não tentar reconectar se canal inativo
         if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
-          this._connectWebSocket();
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          if (!this.channelInactive) { // ✅ Só reconectar se canal NÃO estiver inativo
+            this._connectWebSocket();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          } else {
+            console.log('TTM: Não conectando - canal inativo');
+            return; // ✅ Não enviar se canal inativo
+          }
         }
 
         this.ws.send(JSON.stringify({
@@ -1490,7 +1520,8 @@
             this.chatContent.style.pointerEvents = "auto";
             this._resetNotificationCounter();
 
-            if (!this.ws) {
+            // ✅ MODIFICADO: Só conectar se canal não estiver inativo
+            if (!this.ws && !this.channelInactive) {
                 this._connectWebSocket();
             }
             }
