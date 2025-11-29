@@ -9,7 +9,7 @@
         }
         this.wsUrl = config.wsUrl
         this.theme = null;
-        this.externalThreadId = localStorage.getItem("ttm_external_thread_id") || null;
+        this.threadId = localStorage.getItem("ttm_thread_id") || null;
         this.ws = null;
         this.sessionId = this._generateSessionId();
         this.isOpen = false;
@@ -135,7 +135,7 @@
       // ========================================
 
       _connectWebSocket() {
-        const wsUrl = `${this.wsUrl}/ws/session:${this.sessionId}/${this.externalThreadId || 'new'}?token=${this.token}`;
+        const wsUrl = `${this.wsUrl}/ws/session:${this.sessionId}/${this.threadId || 'new'}?token=${this.token}`;
       
         this.ws = new WebSocket(wsUrl);
         
@@ -201,10 +201,10 @@
           }
           
           if (data.type === "history" && data.data) {
-            const externalThreadId = data.data.external_thread_id;
-            if (externalThreadId) {
-              this.externalThreadId = externalThreadId;
-              localStorage.setItem("ttm_external_thread_id", this.externalThreadId);
+            const threadId = data.data.id;
+            if (threadId) {
+              this.threadId = threadId;
+              localStorage.setItem("ttm_thread_id", this.threadId);
             }
             if (data.data.messages && Array.isArray(data.data.messages)) {
               data.data.messages.forEach(message => {
@@ -218,10 +218,10 @@
       
           if (data.type === "message" && data.data) {
             const message = data.data;
-            const externalThreadId = message.external_thread_id;
-            if (externalThreadId) {
-              this.externalThreadId = externalThreadId;
-              localStorage.setItem("ttm_external_thread_id", this.externalThreadId);
+            const threadId = message.thread_id;
+            if (threadId) {
+              this.threadId = threadId;
+              localStorage.setItem("ttm_thread_id", this.threadId);
             }
             if (this.messagesLoaded) {
               this._enqueueMessage(message, true);
@@ -380,7 +380,7 @@
             metadata: {
               origin: origin
             },
-            external_thread_id: this.externalThreadId
+            thread_id: this.threadId
           }
         }));
       }
@@ -916,11 +916,11 @@
       }
 
       _clearThreadData() {
-        localStorage.removeItem("ttm_external_thread_id");
+        localStorage.removeItem("ttm_thread_id");
         localStorage.removeItem("ttm_user_id");
 
   
-        this.externalThreadId = null;
+        this.threadId = null;
         this.messagesLoaded = false;
         this.displayedMessages.clear();
         this.messagesQueue = [];
@@ -939,14 +939,14 @@
       async _loadMessages() {
         if (this.messagesLoaded) return;
 
-        if (this.externalThreadId && this.ws && this.ws.readyState === WebSocket.OPEN) {
+        if (this.threadId && this.ws && this.ws.readyState === WebSocket.OPEN) {
 
           this._waitingForHistory = true;
           
           this.ws.send(JSON.stringify({
             type: 'history',
             data: {
-              external_thread_id: this.externalThreadId,
+              thread_id: this.threadId,
               token: this.token
             }
           }));
