@@ -201,7 +201,7 @@
           }
           
           if (data.type === "history" && data.data) {
-            const externalThreadId = data.data.id;
+            const externalThreadId = data.data.external_thread_id;
             if (externalThreadId) {
               this.externalThreadId = externalThreadId;
               localStorage.setItem("ttm_external_thread_id", this.externalThreadId);
