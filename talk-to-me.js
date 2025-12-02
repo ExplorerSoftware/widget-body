@@ -130,10 +130,6 @@
         });
       }
 
-      // ========================================
-      // FUNCTIONS (from talk-to-me-functions.js)
-      // ========================================
-
       _connectWebSocket() {
         const wsUrl = `${this.wsUrl}/ws/session:${this.sessionId}/${this.threadId || 'new'}?token=${this.token}`;
       
@@ -282,7 +278,7 @@
           link: widgetStyle.link || this.theme.link,
           link_label: widgetStyle.link_label || this.theme.link_label,
           icon: widgetStyle.icon || this.theme.icon,
-          logo_url: widgetStyle.logo || this.theme.logo_url,
+          logos_url: widgetStyle.logos || this.theme.logos_url,
           wallpaper_url: widgetStyle.wallpaper || this.theme.wallpaper_url,
         };
         
@@ -295,9 +291,50 @@
         }
 
         
-        const header = this.chatContent?.querySelector('.p-1');
+        const header = this.chatContent?.querySelector('.p-1.flex.items-start.gap-2');
         if (header) {
           header.style.background = this.theme.headerColor;
+          const isDark = this.theme.theme === "dark";
+
+          const titleElement = header.querySelector('h3');
+
+          const existingAvatars = header.querySelectorAll('.mt-1.ml-3.w-\\[2\\.5rem\\].h-\\[2\\.5rem\\].rounded-full.border-2');
+          existingAvatars.forEach(avatar => {
+            avatar.remove();
+          });
+
+          if (Array.isArray(this.theme.logos_url) && this.theme.logos_url.length > 0) {
+            this.theme.logos_url.forEach((logo, index) => {
+              const avatarDiv = document.createElement('div');
+              avatarDiv.className = 'mt-1 ml-3 w-[2.5rem] h-[2.5rem] rounded-full border-2 flex items-center justify-center flex-shrink-0';
+              avatarDiv.style.background = isDark ? '#494949' : '#d4d4d4';
+              
+              const img = document.createElement('img');
+              img.src = logo;
+              img.alt = 'Logo';
+              img.className = 'w-[2.5rem] h-[2.5rem] rounded-full object-cover';
+              avatarDiv.appendChild(img);
+
+              if (titleElement) {
+                header.insertBefore(avatarDiv, titleElement);
+              } else {
+                header.appendChild(avatarDiv);
+              }
+            })
+          } else {
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'mt-1 ml-3 w-[2.5rem] h-[2.5rem] rounded-full border-2 flex items-center justify-center flex-shrink-0';
+            avatarDiv.style.background = isDark ? '#494949' : '#d4d4d4';
+            avatarDiv.innerHTML = `
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${isDark ? '#ffffff' : '#000000'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
+            `;
+            
+            if (titleElement) {
+              header.insertBefore(avatarDiv, titleElement);
+            } else {
+              header.appendChild(avatarDiv);
+            }
+          }
         }
         
         const messagesArea = this.chatContent?.querySelector('.flex-1.flex.overflow-y-auto');
@@ -336,7 +373,7 @@
 
           if (this.theme.link && this.theme.link_label) {
             const linkContainer = document.createElement('div');
-            linkContainer.className = 'ttm-link-container flex flex-row items-center justify-center rounded-2xl px-2 py-1 mx-auto w-fit gap-2';
+            linkContainer.className = 'ttm-link-container flex flex-row items-center justify-center rounded-lg mt-2 px-2 py-1 mx-auto w-fit gap-2';
             linkContainer.style.background = isDark ? '#212223' : '#e9e9e9';
             linkContainer.innerHTML = `
               <i data-lucide="link" style="width: 16px; height: 16px; color: ${isDark ? '#ffffff' : '#000000'};"></i>
@@ -359,7 +396,6 @@
         const origin = window.location.hostname || window.location.host || '';
         const username = `user_${this.userIdentifier}_${origin}`;
         
-        // if (!text && !files) return;
         if (!text) return;
 
         if (this.channelInactive) {
@@ -373,19 +409,12 @@
           this._updateSendButtonIcon();
         }
   
-        // let filesData = [];
-        // if (files && files.length > 0) {
-        //   filesData = await this._convertFilesToBase64(files);
-        // }
-
-        // if (text || filesData.length > 0) {
         if (text) {
           const userMessage = {
             text: text || null,
             origin: "customer",
             created_at: new Date().toISOString(),
             timestamp: new Date().getTime(),
-            // media: filesData.length > 0 ? filesData[0] : null
           }
           this._enqueueMessage(userMessage);
           this._processMessageQueue();
@@ -408,7 +437,6 @@
             name: username,
             user_id: this.userIdentifier,
             text: text || null,
-            // files: filesData,
             metadata: {
               origin: origin
             },
@@ -416,29 +444,6 @@
           }
         }));
       }
-
-      // async _convertFilesToBase64(files) {
-      //   const filesData = [];
-      //   for (const file of files) {
-      //     const base64 = await this._fileToBase64(file);
-      //     filesData.push({
-      //       name: file.name,
-      //       type: file.type,
-      //       size: file.size,
-      //       data: base64
-      //     });
-      //   }
-      //   return filesData;
-      // }
-
-      // _fileToBase64(file) {
-      //   return new Promise((resolve, reject) => {
-      //     const reader = new FileReader();
-      //     reader.readAsDataURL(file);
-      //     reader.onload = () => resolve(reader.result);
-      //     reader.onerror = error => reject(error);
-      //   });
-      // }
 
       _initAudioPlayers() {
           document.querySelectorAll('.ttm-audio-player').forEach(async (player) => {
@@ -667,279 +672,6 @@
         this.lucide.createIcons();
       }
 
-      // _initFileHandlers() {
-      //
-      //     if (this._fileHandlersInitialized) {
-      //       return;
-      //   }
-      //
-      //   this.fileButton.addEventListener("click", () => {
-      //       this.dropArea.classList.remove("hidden");
-      //       this.lucide.createIcons();
-      //   })
-      //
-      //   this.closeDropBtn.addEventListener("click", () => {
-      //       this.dropArea.classList.add("hidden")
-      //       this._resetFileSelection();
-      //   })
-      //
-      //   this.dropArea.addEventListener("click", (e) => {
-      //       if (e.target === this.dropArea) {
-      //           this.dropArea.classList.add("hidden")
-      //           this._resetFileSelection();
-      //       }
-      //   })
-      //
-      //   this.selectFileBtn.addEventListener("click", () => {
-      //       this.fileInput.click();
-      //   })
-      //
-      //   this.dropZone.addEventListener("click", (e) => {
-      //       if (e.target === this.dropZone || e.target.closest("#ttm-drop-zone") && !e.target.closest("button")) {
-      //           this.fileInput.click();
-      //       }
-      //   })
-      //
-      //   this.fileInput.addEventListener("change", (e) => {
-      //       const files = Array.from(e.target.files);
-      //       if (files.length > 0) {
-      //           this._handleMultipleFilesSelected(files);
-      //       }
-      //   })
-      //
-      //   this.dropZone.addEventListener("drop", (e) => {
-      //     e.preventDefault();
-      //     e.stopPropagation();
-      //
-      //     this.dropZone.classList.remove("ttm-drag-over");
-      //     this.dragCounter = 0;
-      //
-      //     const files = Array.from(e.dataTransfer.files);
-      //     if (files.length > 0) {
-      //       this._handleMultipleFilesSelected(files);
-      //     }
-      //   })
-      //
-      //   this.dropZone.addEventListener("dragover", (e) => {
-      //     e.preventDefault();
-      //     e.stopPropagation();
-      //
-      //     this.dropZone.classList.add("ttm-drag-over");
-      //   })
-      //
-      //   this.dropZone.addEventListener("dragenter", (e) => {
-      //     e.preventDefault();
-      //     e.stopPropagation();
-      //
-      //     this.dropZone.classList.add("ttm-drag-over");
-      //   })
-      //
-      //   this.dropZone.addEventListener("dragleave", (e) => {
-      //     e.preventDefault();
-      //     e.stopPropagation();
-      //
-      //     if (e.target === this.dropZone) {
-      //       this.dropZone.classList.remove("ttm-drag-over");
-      //     }
-      //   })
-      //   this.dropZone.addEventListener("dragend", (e) => {
-      //     e.preventDefault();
-      //     e.stopPropagation();
-      //
-      //     this.dropZone.classList.remove("ttm-drag-over");
-      //   })
-      //
-      //   if (this.removeFileBtn) {
-      //       this.removeFileBtn.addEventListener("click", () => {
-      //           this._resetFileSelection();
-      //       });
-      //   }
-      //
-      //   this._fileHandlersInitialized = true;
-      //   }
-
-      // _initDropZoneHandlers() {
-      //   if (!this.chatContent) return;
-      //
-      //   this.dragCounter = 0;
-      //   this.dragTimeout = null;
-      //
-      //
-      //   const isDragFiles = (e) => {
-      //     return e.dataTransfer && e.dataTransfer.types && e.dataTransfer.types.includes("Files");
-      //   }
-      //
-      //   this.chatContent.addEventListener("dragenter", (e) => {
-      //     if (!isDragFiles(e)) return;
-      //
-      //     e.preventDefault();
-      //     e.stopPropagation();
-      //
-      //     this.dragCounter++;
-      //
-      //     if (this.dragTimeout) {
-      //       clearTimeout(this.dragTimeout);
-      //       this.dragTimeout = null;
-      //     }
-      //
-      //     if (this.dragCounter === 1 && this.dropArea.classList.contains("hidden")) {
-      //       this.dropArea.classList.remove("hidden");
-      //       this.lucide.createIcons();
-      //     }
-      //   })
-      //
-      //   this.chatContent.addEventListener("dragleave", (e) => {
-      //     if (!isDragFiles(e)) return;
-      //
-      //     e.preventDefault();
-      //     e.stopPropagation();
-      //
-      //     this.dragCounter--;
-      //
-      //     if (this.dragCounter <= 0) {
-      //       this.dragCounter = 0;
-      //
-      //       if (this.dragTimeout) {
-      //         this.dragCounter = 0;
-      //
-      //         if (this.dragTimeout) {
-      //           clearTimeout(this.dragTimeout);
-      //         }
-      //
-      //         this.dragTimeout = setTimeout(() => {
-      //           if (this.dragCounter === 0 && this.dropArea.classList.contains("hidden")) {
-      //             this.dropArea.classList.add("hidden");
-      //             this.lucide.createIcons();
-      //           }
-      //         }, 100);
-      //       }
-      //     }
-      //   })
-      //
-      //   this.chatContent.addEventListener("dragover", (e) => {
-      //     if (!isDragFiles(e)) return;
-      //       e.preventDefault();
-      //       e.stopPropagation();
-      //   })
-      //
-      //   this.chatContent.addEventListener("drop", (e) => {
-      //     if (!isDragFiles(e)) return;
-      //
-      //       e.preventDefault();
-      //       e.stopPropagation();
-      //
-      //       this.dragCounter = 0;
-      //       if (this.dragTimeout) {
-      //         clearTimeout(this.dragTimeout);
-      //         this.dragTimeout = null;
-      //       }
-      //   })
-      // }
-
-      // _handleMultipleFilesSelected(files) {
-      //       this.selectedFiles = this.selectedFiles || [];
-      //       const startIndex = this.selectedFiles.length;
-      //       this.selectedFiles = [...this.selectedFiles, ...files];
-      //
-      //       const previewContainer = document.getElementById("ttm-file-preview");
-      //       if (previewContainer) {
-      //
-      //           files.forEach((file, index) => {
-      //               const actualIndex = startIndex + index;
-      //               const archiveWrapper = document.createElement('div');
-      //               archiveWrapper.className = 'relative';
-      //               const isDark = this.theme.theme === "dark";
-      //
-      //               let archive;
-      //
-      //               if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
-      //
-      //                   archive = file.type.startsWith('image/') ? document.createElement('img') : document.createElement('video');
-      //                   archive.src = URL.createObjectURL(file);
-      //                   archive.alt = file.name;
-      //                   archive.className = 'w-full h-full object-cover rounded-md';
-      //                   archiveWrapper.style.cssText = 'width: 40px; height: 40px;';
-      //                   archiveWrapper.appendChild(archive);
-      //
-      //               } else if (file.type.startsWith('audio/')) {
-      //
-      //                   archiveWrapper.style.cssText = `width: 40px; height: 40px; background: ${isDark ? '#e9e9e9' : '#1a1a1a'}; border-radius: 0.375rem;`;
-      //                   archive = document.createElement('div');
-      //                   archive.className = 'w-full h-full object-cover rounded-md';
-      //                   archive.id = `ttm-file-preview-${actualIndex}`;
-      //                   archiveWrapper.appendChild(archive);
-      //
-      //                   const audioIcon = document.createElement('i');
-      //                   audioIcon.setAttribute('data-lucide', 'audio-lines');
-      //                   audioIcon.style.cssText = `position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; color: ${isDark ? '#000000' : '#ffffff'};`;
-      //                   archiveWrapper.appendChild(audioIcon);
-      //
-      //               } else {
-      //
-      //                   archiveWrapper.style.cssText = `width: 40px; height: 40px; background: ${isDark ? '#e9e9e9' : '#1a1a1a'}; border-radius: 0.375rem;`;
-      //                   archive = document.createElement('div');
-      //                   archive.className = 'w-full h-full object-cover rounded-md';
-      //                   archive.id = `ttm-file-preview-${actualIndex}`;
-      //                   archiveWrapper.appendChild(archive);
-      //
-      //                   const archiveIcon = document.createElement('i');
-      //                   archiveIcon.setAttribute('data-lucide', 'file');
-      //                   archiveIcon.style.cssText = `position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 20px; height: 20px; color: ${isDark ? '#000000' : '#ffffff'};`;
-      //                   archiveWrapper.appendChild(archiveIcon);
-      //
-      //               }
-      //
-      //             const removeBtn = document.createElement('button');
-      //             removeBtn.type = 'button';
-      //             removeBtn.className = 'absolute top-[-9px] p-0 right-[-9px] w-5 h-5 rounded-full flex items-center justify-center cursor-pointer';
-      //             removeBtn.style.cssText = 'border: solid 1px #ffffff; color: #ffffff; background: #ffffff; box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.8);';
-      //             removeBtn.innerHTML = '<i data-lucide="x" style="width: 10px; height: 10px; color: #000000;"></i>';
-      //
-      //             removeBtn.addEventListener('click', () => {
-      //               this.selectedFiles = this.selectedFiles.filter((_, i) => i !== actualIndex);
-      //               archiveWrapper.remove();
-      //               if (archive.src) {
-      //                 URL.revokeObjectURL(archive.src);
-      //               }
-      //               if (this.selectedFiles.length === 0) {
-      //                   previewContainer.classList.add("hidden");
-      //                   this.fileInput.value = "";
-      //               }
-      //               this._updateSendButtonIcon();
-      //             }) 
-      //               archiveWrapper.appendChild(removeBtn);
-      //               previewContainer.appendChild(archiveWrapper);
-      //           })
-      //
-      //           previewContainer.classList.remove("hidden");
-      //           this.lucide.createIcons();
-      //           this._updateSendButtonIcon();
-      //       }
-      //       this.dropArea.classList.add("hidden");
-      //   }
-
-      // _resetFileSelection() {
-      //     this.selectedFiles = [];
-      //     this.fileInput.value = "";
-      //
-      //     const previewContainer = document.getElementById("ttm-file-preview");
-      //     if (previewContainer) {
-      //         const archives = previewContainer.querySelectorAll("img, video, audio");
-      //         archives.forEach(archive => {
-      //             if (archive.src && archive.src.startsWith("blob:")) {
-      //                 URL.revokeObjectURL(archive.src);
-      //             }
-      //         });
-      //         previewContainer.innerHTML = "";
-      //         previewContainer.classList.add("hidden");
-      //     }
-      //     const dropZoneContent = this.dropZone?.querySelector(".flex.flex-col.items-center.justify-center.gap-0");
-      //     if (dropZoneContent) {
-      //       dropZoneContent.classList.remove("hidden");
-      //     }
-      //     this._updateSendButtonIcon();
-      //   }
-
       _closeWebSocket() {
         if (this.ws && this.ws.readyState === WebSocket.OPEN) {
           this.ws.close();
@@ -951,7 +683,6 @@
         localStorage.removeItem("ttm_thread_id");
         localStorage.removeItem("ttm_user_id");
 
-  
         this.threadId = null;
         this.messagesLoaded = false;
         this.displayedMessages.clear();
@@ -959,8 +690,6 @@
         this.pendingWebSocketMessages = [];
         this.userIdentifier = this._getUserIdentifier();
 
-
-        
         this._updateNotificationCounter();
   
         if (this.messagesContainer) {
@@ -1068,10 +797,6 @@
         }
       }
 
-      // ========================================
-      // UI (from talk-to-me-ui.js)
-      // ========================================
-
       _createUI() {
             const isDark = this.theme.theme === "dark";
             this._injectCustomStyles();
@@ -1121,23 +846,7 @@
                         class="p-1 flex items-start gap-2 flex-shrink-0"
                         style="background: ${this.theme.headerColor};  border-bottom: 1px solid ${isDark ? '#565656' : '#d1d5db'};"
                         >
-                        ${this.theme.logo_url ? `
-                            <div 
-                            class="mt-1 ml-3 w-[2.5rem] h-[2.5rem] rounded-full border-2 flex items-center justify-center flex-shrink-0"
-                            style="background: ${isDark ? '#494949' : '#d4d4d4'};"
-                            >
-                            <img 
-                                src="${this.theme.logo_url}" 
-                                alt="Logo" 
-                                class="w-[2.5rem] h-[2.5rem] rounded-full object-cover" 
-                            />
-                        </div>
-                    ` : `            <div 
-                            class="mt-1 ml-3 w-[2.5rem] h-[2.5rem] rounded-full border-2 flex items-center justify-center flex-shrink-0"
-                            style="background: ${isDark ? '#494949' : '#d4d4d4'};"
-                            >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${isDark ? '#ffffff' : '#000000'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
-                        </div>`}
+                  
                     <h3
                         class="flex-1 text-base font-normal mt-[0.9rem] ml-2"
                         style="color: ${isDark ? 'white' : 'black'};"
@@ -1169,18 +878,6 @@
                         class="flex flex-col p-1 gap-0 border-2 rounded-[1rem]"
                         style="background: ${isDark ? '#212224' : '#d9d9d9'}; border: none;"
                         >
-                        <!-- <div
-                            id="ttm-file-preview"
-                            class="hidden flex flex-row items-start gap-2 w-full flex-wrap p-2"
-                        >
-                        </div>
-                        <input
-                            type="file"
-                            id="ttm-file-input"
-                            class="hidden"
-                            accept="image/*,video/*,audio/*,.pdf,.doc,.docx"
-                            multiple
-                        /> -->
                         <textarea
                             type="text"
                             id="ttm-input"
@@ -1195,18 +892,6 @@
                             maxlength="1000"
                         ></textarea>
                         <div class="flex flex-row items-center justify-between w-full gap-2">
-                            <!-- <button
-                            type="button"
-                            id="ttm-file-button"
-                            class="w-8 h-8 flex items-center justify-center self-end m-1.5 border-none cursor-pointer transition-opacity hover:opacity-90 flex-shrink-0"
-                            style="background: transparent; color: ${isDark ? '#ffffff' : '#000000'};"
-                            aria-label="Enviar arquivo"
-                            >
-                            <i 
-                                data-lucide="paperclip" 
-                                style="width: 16px; height: 16px;"
-                            ></i>
-                            </button> -->
                             <div class="flex-1"></div>
                             <button
                             id="ttm-send-button"
@@ -1237,20 +922,9 @@
                 this.sendButton = document.getElementById("ttm-send-button");
                 this.messagesContainer = document.getElementById("ttm-messages");
                 this.closeButton = document.getElementById("ttm-close-button"); 
-                // this.fileInput = document.getElementById("ttm-file-input");
-                // this.fileButton = document.getElementById("ttm-file-button");
-                // this.dropArea = document.getElementById("ttm-drop-area");
-                // this.dropZone = document.getElementById("ttm-drop-zone");
-                // this.selectFileBtn = document.getElementById("ttm-select-file");
-                // this.closeDropBtn = document.getElementById("ttm-close-drop");  
-                // this.filePreview = document.getElementById("ttm-file-preview");
-                // this.removeFileBtn = document.getElementById("ttm-remove-file");
-                // this.selectedFile = null;
                 this.audioStream = null;
 
                 this.lucide.createIcons();
-                // this._initFileHandlers();
-                // this._initDropZoneHandlers();
 
                 this.chatWindow.addEventListener("click", (e) => {
                     if (!this.isOpen) {
@@ -1269,47 +943,17 @@
                     e.stopPropagation();
 
                     const hasText = this.inputField?.value.length > 0;
-                    // const hasFiles = this.selectedFiles && this.selectedFiles.length > 0;
 
-                    // if (this.activeRecorder && this.activeRecorder.state === 'recording') {
-                    // this.activeRecorder.stop();
-                    // return;
-                    // }
-
-                    // if (hasText || hasFiles) {
                     if (hasText) {
-                    // if (this.selectedFiles && this.selectedFiles.length > 0) {
-                    //     this._sendMessage(null, this.selectedFiles);
-                    //     this._resetFileSelection();
-                    // } else {
                         this._sendMessage();
-                    // }
                     return;
                     }
-
-                    // if (!hasText && !hasFiles && !this.activeRecorder) {
-                    // if (!hasText && !this.activeRecorder) {
-                    //   try {
-                    //       if (!this.audioStream || !this.audioStream.active) {
-                    //       this.audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    //       }
-                    //       this.activeRecorder = this._audioRecorder(this.audioStream);
-                    //   } catch (error) {
-                    //       this.audioStream = null;
-                    //       alert('Erro ao acessar o microfone. Verifique as permissões.');
-                    //   }
-                    // }
                 });
 
                 this.inputField?.addEventListener("keypress", (e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
-                    // if (this.selectedFiles && this.selectedFiles.length > 0) {
-                    //     this._sendMessage(null, this.selectedFiles);
-                    //     this._resetFileSelection();
-                    // } else {
                         this._sendMessage();
-                    // }
                     }
                 });  
 
@@ -1323,10 +967,6 @@
 
       _updateSendButtonIcon() {
             const hasText = this.inputField?.value.length > 0;
-            // const hasFiles = this.selectedFiles && this.selectedFiles.length > 0;
-            // const newIcon = (hasText || hasFiles) ? 'arrow-up' : 'audio-lines';
-            // const newIcon = hasText ? 'arrow-up' : 'audio-lines';
-            // this.sendButton.innerHTML = `<i data-lucide="${newIcon}" style="width: 16px; height: 16px;"></i>`;
             this.lucide.createIcons();
             }
 
@@ -1412,7 +1052,6 @@
                 box-sizing: border-box;
                 }
         
-                /* Animações customizadas */
                 @keyframes ttm-slide-in {
                 from {
                     opacity: 0;
@@ -1448,7 +1087,6 @@
                 #ttm-drop-zone {
                 transition: all 0.2s ease;
                 }
-                /* Animação para destacar a área de drop */
                 @keyframes ttm-drag-pulse {
                     0%, 100% {
                         opacity: 1;
@@ -1470,12 +1108,10 @@
                 overflow-y: auto !important;
                 }
         
-                /* Placeholder colors */
                 #ttm-input::placeholder {
                 color: ${isDark ? "#e5e7eb" : "#4b5563"};
                 }
         
-                /* Scrollbar styling */
                 #ttm-messages::-webkit-scrollbar {
                 width: 6px;
                 }
@@ -1487,8 +1123,8 @@
                 -webkit-overflow-scrolling: touch;
                 overscroll-behavior: contain;
                 touch-action: pan-y;
-                overflow-y: scroll !important; /* Forçar scroll sempre visível */
-                -webkit-transform: translateZ(0); /* Força aceleração de hardware */
+                overflow-y: scroll !important;
+                -webkit-transform: translateZ(0);
                 }
         
                 #ttm-input::-webkit-scrollbar {
@@ -1505,7 +1141,6 @@
                 border-radius: 4px;
                 }
         
-                /* Responsivo */
                 @media (max-width: 480px) {
                 #ttm-chat-window[data-open="true"] {
                     width: calc(100vw - 20px) !important;
@@ -1514,7 +1149,6 @@
                 }
                 }
         
-                /* Garantir que os ícones Lucide renderizem corretamente */
                 [data-lucide] {
                 display: inline-block;
                 }
@@ -1603,10 +1237,6 @@
           nameElement.textContent = this.theme.name || "Chat";
         }
       }
-
-      // ========================================
-      // MESSAGES (from talk-to-me-messages.js)
-      // ========================================
 
       _displayMessage(message) {
         const isDark = this.theme.theme === "dark";
