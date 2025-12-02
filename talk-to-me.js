@@ -298,7 +298,7 @@
 
           const titleElement = header.querySelector('h3');
 
-          const existingAvatars = header.querySelectorAll('.mt-1.ml-3.w-\\[2\\.5rem\\].h-\\[2\\.5rem\\].rounded-full.border-2');
+          const existingAvatars = header.querySelectorAll('.mt-1.w-\\[2\\.5rem\\].h-\\[2\\.5rem\\].rounded-full.border-2');
           existingAvatars.forEach(avatar => {
             avatar.remove();
           });
@@ -306,8 +306,12 @@
           if (Array.isArray(this.theme.logos_url) && this.theme.logos_url.length > 0) {
             this.theme.logos_url.forEach((logo, index) => {
               const avatarDiv = document.createElement('div');
-              avatarDiv.className = 'mt-1 ml-3 w-[2.5rem] h-[2.5rem] rounded-full border-2 flex items-center justify-center flex-shrink-0';
+              avatarDiv.className = 'mt-1 w-[2.5rem] h-[2.5rem] rounded-full border-2 flex items-center justify-center flex-shrink-0';
               avatarDiv.style.background = isDark ? '#494949' : '#d4d4d4';
+
+              if (index > 0) {
+                avatarDiv.style.marginLeft = '-8px';
+              }
               
               const img = document.createElement('img');
               img.src = logo;
@@ -328,7 +332,7 @@
             avatarDiv.innerHTML = `
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${isDark ? '#ffffff' : '#000000'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-5"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
             `;
-            
+
             if (titleElement) {
               header.insertBefore(avatarDiv, titleElement);
             } else {
