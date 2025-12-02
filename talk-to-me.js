@@ -37,7 +37,7 @@
         this.theme = {
           theme: "dark",
           name: "Chat",
-          color: "#151619",
+          bodyColor: "#151619",
           icon: "message-circle",
           logo_url: null,
           wallpaper_url: null,
@@ -276,7 +276,8 @@
           ...widgetStyle,
           name: this.config.name || this.theme.name,
           theme: widgetStyle.theme || this.theme.theme,
-          color: widgetStyle.color || this.theme.color,
+          bodyColor: widgetStyle.bodyColor || this.theme.bodyColor,
+          headerColor: widgetStyle.headerColor || this.theme.headerColor,
           icon: widgetStyle.icon || this.theme.icon,
           logo_url: widgetStyle.logo || this.theme.logo_url,
           wallpaper_url: widgetStyle.wallpaper || this.theme.wallpaper_url,
@@ -285,11 +286,11 @@
         this._updateUIWithNewTheme();
         
         const isDark = this.theme.theme === "dark";
-        const primaryColor = this.theme.color || "#151619";
+
         
         const header = this.chatContent?.querySelector('.p-1');
         if (header) {
-          header.style.background = primaryColor;
+          header.style.background = this.theme.headerColor;
         }
         
         const messagesArea = this.chatContent?.querySelector('.flex-1.flex.overflow-y-auto');
@@ -299,7 +300,7 @@
             messagesArea.style.backgroundSize = 'cover';
             messagesArea.style.backgroundPosition = 'center';
           } else {
-            messagesArea.style.background = primaryColor;
+            messagesArea.style.background = this.theme.bodyColor;
           }
         }
         
@@ -309,12 +310,12 @@
         }
         
         if (this.inputField) {
-          this.inputField.style.color = isDark ? '#ffffff' : '#000000';
+          this.inputField.style.bodyColor = isDark ? '#ffffff' : '#000000';
         }
         
         if (this.sendButton) {
           this.sendButton.style.background = isDark ? '#ffffff' : '#000000';
-          this.sendButton.style.color = isDark ? '#000000' : '#ffffff';
+          this.sendButton.style.bodyColor = isDark ? '#000000' : '#ffffff';
         }
         
         if (this.lucide) {
@@ -1044,7 +1045,6 @@
 
       _createUI() {
             const isDark = this.theme.theme === "dark";
-            const primaryColor = this.theme.color || "#151619";
             this._injectCustomStyles();
             this.container = document.createElement("div");
             this.container.id = "ttm-chat-container";
@@ -1090,7 +1090,7 @@
                         >
                         <div
                         class="p-1 flex items-start gap-2 flex-shrink-0"
-                        style="background: ${primaryColor};  border-bottom: 1px solid ${isDark ? '#565656' : '#d1d5db'};"
+                        style="background: ${this.theme.headerColor};  border-bottom: 1px solid ${isDark ? '#565656' : '#d1d5db'};"
                         >
                         ${this.theme.logo_url ? `
                             <div 
@@ -1128,7 +1128,7 @@
                     </div>
                     <div
                     class="flex-1 flex overflow-y-auto flex-col"
-                    style="${this.theme.wallpaper_url ? `background-image: url(${this.theme.wallpaper_url}); background-size: cover; background-position: center;` : primaryColor ? `background: ${primaryColor};` : ''}"
+                    style="${this.theme.wallpaper_url ? `background-image: url(${this.theme.wallpaper_url}); background-size: cover; background-position: center;` : this.theme.bodyColor ? `background: ${this.theme.bodyColor};` : ''}"
                     >
                     <div
                         id="ttm-messages"
@@ -1548,7 +1548,6 @@
         if (!this.container || !this.theme) return;
         
         const isDark = this.theme.theme === "dark";
-        const primaryColor = this.theme.color || "#000000";
         const iconName = this.theme.icon || "message-circle";
         
         const iconElement = this.buttonIcon?.querySelector('[data-lucide]');
@@ -1560,7 +1559,7 @@
         
         const header = this.chatContent?.querySelector('.p-1');
         if (header) {
-          header.style.background = primaryColor;
+          header.style.background = this.theme.headerColor;
         }
         
         if (this.theme.logo_url) {
