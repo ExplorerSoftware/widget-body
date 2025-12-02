@@ -336,8 +336,8 @@
 
           if (this.theme.link && this.theme.link_label) {
             const linkContainer = document.createElement('div');
-            linkContainer.className = 'ttm-link-container flex flex-row items-center justify-center rounded-2xl p-2 mx-auto w-fit gap-2';
-            linkContainer.style.background = isDark ? '#151619' : '#e9e9e9';
+            linkContainer.className = 'ttm-link-container flex flex-row items-center justify-center rounded-2xl px-2 py-1 mx-auto w-fit gap-2';
+            linkContainer.style.background = isDark ? '#212223' : '#e9e9e9';
             linkContainer.innerHTML = `
               <i data-lucide="link" style="width: 16px; height: 16px; color: ${isDark ? '#ffffff' : '#000000'};"></i>
               <a href="${this.theme.link}" target="_blank" class="text-sm" style="color: ${isDark ? '#ffffff' : '#000000'}; text-decoration: none;">
