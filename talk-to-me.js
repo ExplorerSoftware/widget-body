@@ -278,6 +278,9 @@
           theme: widgetStyle.theme || this.theme.theme,
           bodyColor: widgetStyle.bodyColor || this.theme.bodyColor,
           headerColor: widgetStyle.headerColor || this.theme.headerColor,
+          buttonColor: widgetStyle.buttonColor || this.theme.buttonColor,
+          link: widgetStyle.link || this.theme.link,
+          link_label: widgetStyle.link_label || this.theme.link_label,
           icon: widgetStyle.icon || this.theme.icon,
           logo_url: widgetStyle.logo || this.theme.logo_url,
           wallpaper_url: widgetStyle.wallpaper || this.theme.wallpaper_url,
@@ -1057,7 +1060,7 @@
                     id="ttm-chat-window"
                     class="fixed flex flex-col border-2 shadow-2xl cursor-pointer"
                     style="
-                        background: ${isDark ? '#151619' : '#f9fafb'};
+                        background: ${this.theme.buttonColor};
                         bottom: 20px;
                         right: 20px;
                         border-radius: 24px;
@@ -1193,6 +1196,12 @@
                             </button>
                         </div>
                         </div>
+                        ${this.theme.link && this.theme.link_label ? `
+                          <div class="flex flex-row items-center justify-center rounded-2xl p-2 mx-auto w-fit gap-2" style="background:${isDark ? '#151619' : '#e9e9e9'};">
+                          <i data-lucide="link" style="width: 16px; height: 16px; color: ${isDark ? '#ffffff' : '#000000'};"></i>
+                        <a href="${this.theme.link}" target="_blank" class="text-sm ">${this.theme.link_label}</a>
+                        </div>
+                        ` : ''}
                     </div>
                     </div>
                 </div>
