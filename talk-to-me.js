@@ -304,9 +304,14 @@
           });
 
           if (Array.isArray(this.theme.logos_url) && this.theme.logos_url.length > 0) {
+            // Cria um container para os avatares
+            const avatarsContainer = document.createElement('div');
+            avatarsContainer.className = 'flex items-center';
+            avatarsContainer.style.marginTop = '0.25rem';
+            
             this.theme.logos_url.forEach((logo, index) => {
               const avatarDiv = document.createElement('div');
-              avatarDiv.className = 'mt-1 w-[2.5rem] h-[2.5rem] rounded-full border-2 flex items-center justify-center flex-shrink-0';
+              avatarDiv.className = 'w-[2.5rem] h-[2.5rem] rounded-full border-2 flex items-center justify-center flex-shrink-0';
               avatarDiv.style.background = isDark ? '#494949' : '#d4d4d4';
 
               if (index > 0) {
@@ -319,12 +324,14 @@
               img.className = 'w-[2.5rem] h-[2.5rem] rounded-full object-cover';
               avatarDiv.appendChild(img);
 
-              if (titleElement) {
-                header.insertBefore(avatarDiv, titleElement);
-              } else {
-                header.appendChild(avatarDiv);
-              }
-            })
+              avatarsContainer.appendChild(avatarDiv);
+            });
+
+            if (titleElement) {
+              header.insertBefore(avatarsContainer, titleElement);
+            } else {
+              header.appendChild(avatarsContainer);
+            }
           } else {
             const avatarDiv = document.createElement('div');
             avatarDiv.className = 'mt-1 ml-3 w-[2.5rem] h-[2.5rem] rounded-full border-2 flex items-center justify-center flex-shrink-0';
