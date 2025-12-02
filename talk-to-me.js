@@ -304,9 +304,9 @@
           });
 
           if (Array.isArray(this.theme.logos_url) && this.theme.logos_url.length > 0) {
-            // Cria um container para os avatares
+
             const avatarsContainer = document.createElement('div');
-            avatarsContainer.className = 'flex items-center';
+            avatarsContainer.className = 'flex ml-[10px] items-center';
             avatarsContainer.style.marginTop = '0.25rem';
             
             this.theme.logos_url.forEach((logo, index) => {
@@ -315,7 +315,7 @@
               avatarDiv.style.background = isDark ? '#494949' : '#d4d4d4';
 
               if (index > 0) {
-                avatarDiv.style.marginLeft = '-8px';
+                avatarDiv.style.marginLeft = '-16px';
               }
               
               const img = document.createElement('img');
@@ -859,7 +859,7 @@
                         >
                   
                     <h3
-                        class="flex-1 text-base font-normal mt-[0.9rem] ml-2"
+                        class="flex-1 text-base font-normal mt-[0.9rem] ml-1"
                         style="color: ${isDark ? 'white' : 'black'};"
                     >
                         ${this.theme.name}
