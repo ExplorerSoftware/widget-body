@@ -366,6 +366,16 @@
         
         if (this.inputField) {
           this.inputField.style.color = isDark ? '#ffffff' : '#000000';
+          
+          // Atualizar cor do placeholder no CSS
+          const styleSheet = document.querySelector('style[data-ttm-styles]');
+          if (styleSheet) {
+            const newPlaceholderColor = isDark ? "#e5e7eb" : "#0D0D0D";
+            styleSheet.textContent = styleSheet.textContent.replace(
+              /(#ttm-input::placeholder\s*\{[^}]*color:\s*)[^;]+(;)/,
+              `$1${newPlaceholderColor}$2`
+            );
+          }
         }
         
         if (this.sendButton) {
@@ -1129,7 +1139,7 @@
                 }
         
                 #ttm-input::placeholder {
-                color: ${isDark ? "#e5e7eb" : "#0D0D0D"};
+                color: ${isDark ? "#e5e7eb" : "#0D0D0D"} !important;
                 }
         
                 #ttm-messages::-webkit-scrollbar {
@@ -1175,6 +1185,7 @@
             `;
 
             const styleSheet = document.createElement("style");
+            styleSheet.setAttribute('data-ttm-styles', 'true'); // Adicionar este atributo
             styleSheet.textContent = styles;
             document.head.appendChild(styleSheet);
             }
