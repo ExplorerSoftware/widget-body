@@ -895,7 +895,7 @@
                     </div>
                     <div class="p-2 flex-shrink-0">
                         <div
-                        class="flex flex-col p-1 gap-0 border-2 rounded-[1rem]"
+                        class="flex flex-col p-1 gap-0 border-2 rounded-[1.5rem]"
                         style="background: ${isDark ? '#212224' : '#e9e9e9'}; border: none;"
                         >
                         <textarea
@@ -903,7 +903,7 @@
                             id="ttm-input"
                             class="flex p-1 w-full border-none bg-transparent h-[36px] resize-none max-h-[100px] line-height-1.5 overflow-y-auto outline-none text-sm"
                             style="
-                            color: ${isDark ? '#ffffff' : '#000000'};
+                            color: ${!isDark ? '#ffffff' : '#000000'};
                             padding-top: 10px;
                             padding-left: 1rem;
                             box-sizing: border-box;
@@ -1129,7 +1129,7 @@
                 }
         
                 #ttm-input::placeholder {
-                color: ${isDark ? "#e5e7eb" : "#cacaca"};
+                color: ${isDark ? "#e5e7eb" : "#495565"};
                 }
         
                 #ttm-messages::-webkit-scrollbar {
