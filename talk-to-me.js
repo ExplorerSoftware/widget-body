@@ -1129,7 +1129,7 @@
                 }
         
                 #ttm-input::placeholder {
-                color: ${isDark ? "#e5e7eb" : "#495565"};
+                color: ${isDark ? "#e5e7eb" : "#0D0D0D"};
                 }
         
                 #ttm-messages::-webkit-scrollbar {
