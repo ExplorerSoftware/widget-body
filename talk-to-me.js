@@ -370,7 +370,11 @@
         
         if (this.sendButton) {
           this.sendButton.style.background = isDark ? '#ffffff' : '#000000';
-          this.sendButton.style.bodyColor = isDark ? '#000000' : '#ffffff';
+          const sendButtonIcon = this.sendButton.querySelector('svg');
+          if (sendButtonIcon) {
+              sendButtonIcon.style.stroke = isDark ? '#000000' : '#ffffff';
+              sendButtonIcon.style.color = isDark ? '#000000' : '#ffffff';
+          }
         }
         
         const inputContainerParent = inputContainer?.parentElement;
@@ -665,7 +669,7 @@
   
             this.sendButton.style.background = '#ef4444';
             this.sendButton.style.animation = 'ttm-pulse 1.5s ease-in-out infinite';
-            this.sendButton.innerHTML = `<i data-lucide="stop" style="width: 16px; height: 16px;"></i>`;
+            this.sendButton.innerHTML = `<i data-lucide="stop" style="width: 16px; height: 16px; color: #ffffff;"></i>`;
             this.inputField.placeholder = `Gravando... ${recordingTime}`;
   
         } else {
@@ -681,6 +685,11 @@
             this._updateSendButtonIcon(); 
         }
         this.lucide.createIcons();
+        const stopIcon = this.sendButton.querySelector('svg');
+        if (stopIcon) {
+            stopIcon.style.stroke = '#ffffff';
+            stopIcon.style.color = '#ffffff';
+        }
       }
 
       _closeWebSocket() {
@@ -908,7 +917,7 @@
                             id="ttm-send-button"
                             type="button"
                             class="w-8 h-8 rounded-full flex items-center justify-center self-end m-1.5 border-none cursor-pointer transition-opacity hover:opacity-90 flex-shrink-0"
-                            style="background: ${isDark ? '#ffffff' : '#000000'}; color: ${isDark ? '#000000' : '#ffffff'};"
+                            style="background: ${isDark ? '#ffffff' : '#000000'};"
                             aria-label="Enviar mensagem"
                             >
                             <i 
@@ -1120,7 +1129,7 @@
                 }
         
                 #ttm-input::placeholder {
-                color: ${isDark ? "#e5e7eb" : "#4b5563"};
+                color: ${isDark ? "#e5e7eb" : "#cacaca"};
                 }
         
                 #ttm-messages::-webkit-scrollbar {
