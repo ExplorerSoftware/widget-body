@@ -315,7 +315,7 @@
               avatarDiv.style.background = isDark ? '#494949' : '#d4d4d4';
 
               if (index > 0) {
-                avatarDiv.style.marginLeft = '-16px';
+                avatarDiv.style.marginLeft = '-14px';
               }
               
               const img = document.createElement('img');
@@ -361,7 +361,7 @@
         
         const inputContainer = this.chatContent?.querySelector('.flex.flex-col.p-1.gap-0');
         if (inputContainer) {
-          inputContainer.style.background = isDark ? '#212224' : '#d9d9d9';
+          inputContainer.style.background = isDark ? '#212224' : '#e9e9e9';
         }
         
         if (this.inputField) {
@@ -887,7 +887,7 @@
                     <div class="p-2 flex-shrink-0">
                         <div
                         class="flex flex-col p-1 gap-0 border-2 rounded-[1rem]"
-                        style="background: ${isDark ? '#212224' : '#d9d9d9'}; border: none;"
+                        style="background: ${isDark ? '#212224' : '#e9e9e9'}; border: none;"
                         >
                         <textarea
                             type="text"
@@ -913,7 +913,7 @@
                             >
                             <i 
                                 data-lucide="arrow-up" 
-                                style="width: 16px; height: 16px;"
+                                style="width: 16px; height: 16px; color: ${isDark ? '#000000' : '#ffffff'};"
                             ></i>
                             </button>
                         </div>
@@ -1258,7 +1258,7 @@
 
         messageElement.className = `ttm-message ${isCustomer ? "ttm-message-customer" : "ttm-message-agent"} ${isTalkToMe ? "ttm-message-talk-to-me" : ""}`;
 
-        const bubbleColor = isTalkToMe ? (isDark ? "#000000" : "#ffffff") : (isCustomer ? (isDark ? "#ffffff" : "#000000") : "#000000"); 
+        const bubbleColor = isTalkToMe ? (isDark ? "#000000" : "#ebeaea") : (isCustomer ? (isDark ? "#ffffff" : "#000000") : "#000000"); 
         const textColor = isTalkToMe ? (isDark ? "#ffffff" : "#000000") : (isCustomer ? (isDark ? "#000000" : "#ffffff") : "#000000");  
 
         messageElement.innerHTML = `
@@ -1434,14 +1434,12 @@
                 style="
                 background: ${isDark ? "#ffffff" : "#181818"};
                 border: none; 
-                &:hover {
-                    background: ${isDark ? "#f0f0f0" : "#282828"}; 
-                }
                 color: ${isDark ? "#000000" : "#ffffff"};
                 "
-                data-option-label="${option.label}"
+                data-option-label="${option.label}" onmouseover="this.style.background='${isDark ? "#f0f0f0" : "#282828"}'"
+                onmouseout="this.style.background='${isDark ? "#ffffff" : "#181818"}'"
                 >
-                    ${option.label}
+                    ${option.label} 
                 </button>
                 `).join("")}
                 </div>
