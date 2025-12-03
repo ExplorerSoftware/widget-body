@@ -365,7 +365,7 @@
         }
         
         if (this.inputField) {
-          this.inputField.style.bodyColor = isDark ? '#ffffff' : '#000000';
+          this.inputField.style.color = isDark ? '#ffffff' : '#000000';
         }
         
         if (this.sendButton) {
@@ -903,7 +903,7 @@
                             id="ttm-input"
                             class="flex p-1 w-full border-none bg-transparent h-[36px] resize-none max-h-[100px] line-height-1.5 overflow-y-auto outline-none text-sm"
                             style="
-                            color: ${!isDark ? '#ffffff' : '#000000'};
+                            color: ${isDark ? '#ffffff' : '#000000'};
                             padding-top: 10px;
                             padding-left: 1rem;
                             box-sizing: border-box;
