@@ -424,16 +424,65 @@
       }
 
       _agentTypingAnimation() {
+        if (document.querySelector('.ttm-agent-typing')) {
+          return;
+        }
+
         const isDark = this.theme.theme === "dark";
+        const isTalkToMe = true;
+        
+        const bubbleColor = isTalkToMe ? (isDark ? "#000000" : "#ebeaea") : "#000000";
+        const dotColor = isTalkToMe ? (isDark ? "#ffffff" : "#000000") : "#ffffff";
+
         const agentTypingElement = document.createElement('div');
-        agentTypingElement.className = 'ttm-agent-typing';
+        agentTypingElement.className = 'ttm-message ttm-message-agent ttm-message-talk-to-me ttm-agent-typing';
+        
         agentTypingElement.innerHTML = `
-          <div class="ttm-agent-typing-dot w-[8px] h-[8px] rounded-full bg-${isDark ? "#ffffff" : "#000000"}">
-          <i data-lucide="loader-circle" style="width: 16px; height: 16px; color: ${isDark ? "#ffffff" : "#000000"};"></i>
+          <div 
+            class="relative w-fit max-w-[80%] h-full rounded-xl px-3 py-2 break-words"
+            style="
+              background: ${bubbleColor};
+              color: ${dotColor};
+              border: solid 1px ${isDark ? 'transparent' : '#d1d5db'};
+              display: flex;
+              align-items: center;
+              gap: 4px;
+            "
+          >
+            <div class="ttm-agent-typing-dot" style="
+              width: 8px;
+              height: 8px;
+              background: ${dotColor};
+              border-radius: 50%;
+              animation: ttm-typing-dot 1.4s infinite;
+              animation-delay: 0s;
+            "></div>
+            <div class="ttm-agent-typing-dot" style="
+              width: 8px;
+              height: 8px;
+              background: ${dotColor};
+              border-radius: 50%;
+              animation: ttm-typing-dot 1.4s infinite;
+              animation-delay: 0.2s;
+            "></div>
+            <div class="ttm-agent-typing-dot" style="
+              width: 8px;
+              height: 8px;
+              background: ${dotColor};
+              border-radius: 50%;
+              animation: ttm-typing-dot 1.4s infinite;
+              animation-delay: 0.4s;
+            "></div>
           </div>
         `;
+        
         this.messagesContainer.appendChild(agentTypingElement);
-
+        
+        if (this.messagesContainer && !this.userIsScrolling) {
+          requestAnimationFrame(() => {
+            this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+          });
+        }
       }
 
       _clearAgentTypingAnimation() {
@@ -1207,9 +1256,20 @@
 
                 .ttm-agent-typing {
                 display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 4px;
+                align-items: flex-start;
+                justify-content: flex-start;
+                animation: ttm-slide-in 0.3s ease-in-out;
+                }
+
+                @keyframes ttm-typing-dot {
+                  0%, 60%, 100% {
+                    transform: translateY(0);
+                    opacity: 0.7;
+                  }
+                  30% {
+                    transform: translateY(-8px);
+                    opacity: 1;
+                  }
                 }
 
                 .ttm-agent-typing-dot {
@@ -1217,7 +1277,8 @@
                 height: 8px;
                 background: ${isDark ? "#ffffff" : "#000000"};
                 border-radius: 50%;
-                animation: ttm-pulse 1.5s infinite;
+                animation: ttm-typing-dot 1.4s infinite;
+                animation-delay: 0s;
                 }
 
                 @keyframes ttm-pulse {
