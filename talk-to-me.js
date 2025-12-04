@@ -424,13 +424,13 @@
       }
 
       _agentTypingAnimation() {
-        // Verificar se já existe para evitar duplicatas
+
         if (document.querySelector('.ttm-agent-typing')) {
           return;
         }
 
         const isDark = this.theme.theme === "dark";
-        const isTalkToMe = true; // É sempre do agente/TalkToMe
+        const isTalkToMe = true;
         
         const bubbleColor = isTalkToMe ? (isDark ? "#000000" : "#ebeaea") : "#000000";
         const dotColor = isTalkToMe ? (isDark ? "#ffffff" : "#000000") : "#ffffff";
@@ -980,7 +980,13 @@
                         id="ttm-messages"
                         class="flex-1 p-2  flex flex-col gap-2 bg-transparent"
                     >
+                    <div
+                        id="ttm-agent-typing"
+                        class="p-2  flex flex-col gap-2 bg-transparent"
+                    >
                     </div>
+                    </div>
+       
                     <div class="p-2 flex-shrink-0">
                         <div
                         class="flex flex-col p-1 gap-0 border-2 rounded-[1.5rem]"
