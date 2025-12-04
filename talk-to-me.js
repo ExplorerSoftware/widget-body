@@ -44,6 +44,10 @@
         };
         
         this._createUI();
+        // Ocultar o chat inicialmente
+        if (this.container) {
+          this.container.style.display = 'none';
+        }
         this._connectWebSocket();
       }
 
@@ -141,12 +145,21 @@
             this.ws.close();
             this.ws = null;
             this.channelInactive = true;
+            // Ocultar o chat se a conexão falhar
+            if (this.container) {
+              this.container.style.display = 'none';
+            }
           }
         }, 5000);
       
         this.ws.onopen = () => {
           clearTimeout(connectionTimeout);
           this.channelInactive = false;
+          
+          // Mostrar o chat apenas quando a conexão for estabelecida
+          if (this.container && this.ws) {
+            this.container.style.display = 'block';
+          }
           
           this._requestMetadata();
           
@@ -158,6 +171,10 @@
         this.ws.onerror = (e) => {
           clearTimeout(connectionTimeout);
           console.error('TTM: WS error:', e);
+          // Ocultar o chat em caso de erro
+          if (this.container) {
+            this.container.style.display = 'none';
+          }
         };
       
         this.ws.onclose = (e) => {
@@ -165,6 +182,10 @@
           console.log('TTM: WebSocket fechado. Código: ' + e.code);
 
           this.ws = null;
+          // Ocultar o chat quando a conexão for fechada
+          if (this.container) {
+            this.container.style.display = 'none';
+          }
         };
       
         this.ws.onmessage = (event) => {
@@ -696,6 +717,10 @@
           this.ws.close();
         }
         this.ws = null;
+        // Ocultar o chat quando o WebSocket for fechado
+        if (this.container) {
+          this.container.style.display = 'none';
+        }
       }
 
       _clearThreadData() {
