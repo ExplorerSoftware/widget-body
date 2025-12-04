@@ -230,6 +230,14 @@
               this.pendingWebSocketMessages.push(message);
             }
           }
+
+          if (data.type === "presence") {
+            if (data.data.presence === "typing") {
+              this._agentTypingAnimation();
+            } else {
+              this._clearAgentTypingAnimation();
+            }
+          }
       
           if (data.type === "finish") {
             this._clearThreadData();
@@ -413,6 +421,24 @@
         if (this.lucide) {
           this.lucide.createIcons();
         }
+      }
+
+      _agentTypingAnimation() {
+        const agentTypingElement = document.createElement('div');
+        agentTypingElement.className = 'ttm-agent-typing';
+        agentTypingElement.innerHTML = `
+          <div class="ttm-agent-typing-dot"></div>
+        `;
+        this.messagesContainer.appendChild(agentTypingElement);
+        this.lucide.createIcons();
+      }
+
+      _clearAgentTypingAnimation() {
+        const agentTypingElement = document.querySelector('.ttm-agent-typing');
+        if (agentTypingElement) {
+          agentTypingElement.remove();
+        }
+        this.lucide.createIcons();
       }
 
       async _sendMessage(textOverride = null, files = null) {
@@ -1107,12 +1133,14 @@
                 display: flex;
                 justify-content: flex-end !important;
                 }
+
                 #ttm-drop-zone.ttm-drag-over {
                 border-color: #3b82f6 !important;
                 background: ${isDark ? "#1e3a5f" : "#dbeafe"} !important;
                 transform: scale(1.02);
                 transition: all 0.2s ease;
                 }
+
                 #ttm-drop-zone {
                 transition: all 0.2s ease;
                 }
@@ -1127,11 +1155,13 @@
                 #ttm-drop-zone.ttm-drag-over {
                 animation: ttm-drag-pulse 1s ease-in-out infinite;
                 }
+
                 .ttm-message {
                 pointer-events: auto;
                 touch-action: pan-y;
                 animation: ttm-slide-in 0.3s ease-in-out;
                 }
+
                 #ttm-input {
                 box-sizing: border-box !important;
                 overflow-y: auto !important;
@@ -1144,10 +1174,12 @@
                 #ttm-messages::-webkit-scrollbar {
                 width: 6px;
                 }
+
                 #ttm-messages::-webkit-scrollbar-thumb {
                 background: ${isDark ? "#404040" : "#d1d5db"};
                 border-radius: 3px;
                 }
+
                 #ttm-messages {
                 -webkit-overflow-scrolling: touch;
                 overscroll-behavior: contain;
@@ -1169,6 +1201,23 @@
                 background: ${isDark ? "#666" : "#888"};
                 border-radius: 4px;
                 }
+
+                .ttm-agent-typing {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 4px;
+                }
+
+                .ttm-agent-typing-dot {
+                width: 8px;
+                height: 8px;
+                background: ${isDark ? "#ffffff" : "#000000"};
+                border-radius: 50%;
+                animation: ttm-pulse 1.5s infinite;
+                }
+
+                @keyframes ttm-pulse {
         
                 @media (max-width: 480px) {
                 #ttm-chat-window[data-open="true"] {
