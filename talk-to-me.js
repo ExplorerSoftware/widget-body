@@ -425,7 +425,7 @@
 
       _agentTypingAnimation() {
 
-        if (document.querySelector('.ttm-agent-typing')) {
+        if (document.querySelector('ttm-agent-typing')) {
           return;
         }
 
@@ -488,7 +488,7 @@
       }
 
       _clearAgentTypingAnimation() {
-        const agentTypingElement = document.querySelector('.ttm-agent-typing');
+        const agentTypingElement = document.querySelector('ttm-agent-typing');
         if (agentTypingElement) {
           agentTypingElement.remove();
         }
