@@ -1334,7 +1334,7 @@
       const textColor = (isDark ? "#ffffff" : "#000000");  
 
       const presenceElement = document.createElement("div");
-      presenceElement.className = `ttm-message ttm-message-agent ttm-message-talk-to-me`;
+      presenceElement.className = `ttm-message-agent`;
       presenceElement.style.background = bubbleColor;
       presenceElement.style.color = textColor;
 
@@ -1342,6 +1342,11 @@
       presenceElement.innerHTML = `
          <div 
             class="relative w-fit max-w-[80%] h-full rounded-xl px-2 py-2"
+            style="
+                background: ${bubbleColor};
+                color: ${textColor};
+                border: solid 1px ${isDark ? 'transparent' : '#d1d5db'};
+            "
             >
 
             <div class="ttm-agent-typing">
@@ -1355,7 +1360,7 @@
     }
 
       _clearPresence() {
-        const presenceElement = document.querySelector('.ttm-message.ttm-message-agent.ttm-message-talk-to-me');
+        const presenceElement = document.querySelector('.ttm-message-agent');
         if (presenceElement) {
           presenceElement.remove();
         }
