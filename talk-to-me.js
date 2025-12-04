@@ -1334,7 +1334,7 @@
       const textColor = (isDark ? "#ffffff" : "#000000");  
 
       const presenceElement = document.createElement("div");
-      presenceElement.className = `ttm-message-agent`;
+      presenceElement.className = `ttm-message-agent ttm-presence`;
       presenceElement.style.background = bubbleColor;
       presenceElement.style.color = textColor;
 
@@ -1360,7 +1360,7 @@
     }
 
       _clearPresence() {
-        const presenceElement = document.querySelector('.ttm-message-agent');
+        const presenceElement = document.querySelector('.ttm-presence');
         if (presenceElement) {
           presenceElement.remove();
         }
