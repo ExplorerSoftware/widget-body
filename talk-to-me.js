@@ -424,13 +424,16 @@
       }
 
       _agentTypingAnimation() {
+        const isDark = this.theme.theme === "dark";
         const agentTypingElement = document.createElement('div');
         agentTypingElement.className = 'ttm-agent-typing';
         agentTypingElement.innerHTML = `
-          <div class="ttm-agent-typing-dot"></div>
+          <div class="ttm-agent-typing-dot w-[8px] h-[8px] rounded-full bg-${isDark ? "#ffffff" : "#000000"}">
+          <i data-lucide="loader-circle" style="width: 16px; height: 16px; color: ${isDark ? "#ffffff" : "#000000"};"></i>
+          </div>
         `;
         this.messagesContainer.appendChild(agentTypingElement);
-        this.lucide.createIcons();
+
       }
 
       _clearAgentTypingAnimation() {
@@ -438,7 +441,6 @@
         if (agentTypingElement) {
           agentTypingElement.remove();
         }
-        this.lucide.createIcons();
       }
 
       async _sendMessage(textOverride = null, files = null) {
@@ -1165,6 +1167,7 @@
                 #ttm-input {
                 box-sizing: border-box !important;
                 overflow-y: auto !important;
+                font-family: inherit !important;
                 }
         
                 #ttm-input::placeholder {
@@ -1321,6 +1324,10 @@
         const isDark = this.theme.theme === "dark";
         const isCustomer = message.origin === "customer";
         const isTalkToMe = message.origin != "customer";
+        
+        if (!isCustomer) {
+          this._clearAgentTypingAnimation();
+        }
 
         const messageElement = document.createElement("div");
 
@@ -1328,6 +1335,8 @@
 
         const bubbleColor = isTalkToMe ? (isDark ? "#000000" : "#ebeaea") : (isCustomer ? (isDark ? "#ffffff" : "#000000") : "#000000"); 
         const textColor = isTalkToMe ? (isDark ? "#ffffff" : "#000000") : (isCustomer ? (isDark ? "#000000" : "#ffffff") : "#000000");  
+
+
 
         messageElement.innerHTML = `
             <div 
