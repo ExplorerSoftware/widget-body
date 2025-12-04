@@ -162,22 +162,21 @@
       
         this.ws.onclose = (e) => {
           clearTimeout(connectionTimeout);
-          console.log('TTM: WebSocket fechado. Código: ' + e.code);
-      
+          alert('TTM: WebSocket fechado. Código: ' + e.code);
+        
           if (e.code >= 4000 && e.code <= 4999) {
               this.channelInactive = true;
               this.ws = null;
-      
+        
               if (e.code === 4003) {
-                  // Canal inativo ou desativado
+                  alert('TTM: Canal inativo ou desativado');
               } else {
-                  // Canal indisponível
+                  alert('TTM: Canal indisponível');
               }
               return;
           }
-
           this.ws = null;
-      };
+        };
       
         this.ws.onmessage = (event) => {
           const data = JSON.parse(event.data);
