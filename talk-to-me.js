@@ -367,7 +367,6 @@
         if (this.inputField) {
           this.inputField.style.color = isDark ? '#ffffff' : '#000000';
           
-          // Atualizar cor do placeholder no CSS
           const styleSheet = document.querySelector('style[data-ttm-styles]');
           if (styleSheet) {
             const newPlaceholderColor = isDark ? "#e5e7eb" : "#0D0D0D";
@@ -1465,6 +1464,8 @@
                 </div>
             ` : ""}
             </div>
+
+            ${ message.origin === "AI" && message.metadata?.ai_agent?.name ? `<span class="text-xs m-0 mt-1 whitespace-normal break-words" style="opacity: 0.7; color: ${textColor};">${message.metadata.ai_agent.name}</span>` : ""}
         `;
 
         this.messagesContainer.appendChild(messageElement);
