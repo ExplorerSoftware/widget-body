@@ -229,15 +229,14 @@
             } else {
               this.pendingWebSocketMessages.push(message);
             }
+            this._clearPresence();
           }
 
           if (data.type === "presence") {
             if (data.data.status === "typing") {
               alert('TTM: Agent is typing BITCH');
               this._displayPresence();
-            } else {
-              this._clearPresence();
-            }
+            } 
           }
       
           if (data.type === "finish") {
@@ -1243,7 +1242,7 @@
             `;
 
             const styleSheet = document.createElement("style");
-            styleSheet.setAttribute('data-ttm-styles', 'true'); // Adicionar este atributo
+            styleSheet.setAttribute('data-ttm-styles', 'true'); 
             styleSheet.textContent = styles;
             document.head.appendChild(styleSheet);
             }
@@ -1342,12 +1341,7 @@
       presenceElement.style.border =`solid 1px ${isDark ? 'transparent' : '#d1d5db'}`;
       presenceElement.innerHTML = `
          <div 
-            class="relative w-fit max-w-[80%] h-full rounded-xl px-2 py-2 break-words"
-            style="
-                background: ${bubbleColor};
-                color: ${textColor};
-                border: solid 1px ${isDark ? 'transparent' : '#d1d5db'};
-            "
+            class="relative w-fit max-w-[80%] h-full rounded-xl px-2 py-2"
             >
 
             <div class="ttm-agent-typing">
