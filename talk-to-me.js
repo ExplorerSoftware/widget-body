@@ -141,14 +141,12 @@
             this.ws.close();
             this.ws = null;
             this.channelInactive = true;
-            alert('Este canal de atendimento está temporariamente indisponível.');
           }
         }, 5000);
       
         this.ws.onopen = () => {
           clearTimeout(connectionTimeout);
           this.channelInactive = false;
-          alert('TTM: WebSocket conectado com sucesso!');
           
           this._requestMetadata();
           
@@ -171,9 +169,9 @@
               this.ws = null;
       
               if (e.code === 4003) {
-                  alert('Este canal de atendimento está inativo ou foi desativado.');
+                  // Canal inativo ou desativado
               } else {
-                  alert('Não foi possível conectar. Canal indisponível.');
+                  // Canal indisponível
               }
               return;
           }
@@ -183,7 +181,6 @@
       
         this.ws.onmessage = (event) => {
           const data = JSON.parse(event.data);
-          alert('TTM: Mensagem recebida - Tipo: ' + data.type);
           
           if (data.type === "metadata" && data.data) {
             this._handleMetadata(data.data);
@@ -192,7 +189,6 @@
           
           if (data.type === "error") {
             console.error('TTM Error:', data.error);
-            alert('TTM Error: ' + data.error);
             return;
           }
           
@@ -234,7 +230,6 @@
 
           if (data.type === "presence") {
             if (data.data.status === "typing") {
-              alert('TTM: Agent is typing BITCH');
               this._displayPresence();
             } 
           }
@@ -432,7 +427,6 @@
         if (!text) return;
 
         if (this.channelInactive) {
-          alert('Este canal de atendimento está inativo. Não é possível enviar mensagens.');
           return;
         }
 
