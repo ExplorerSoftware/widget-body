@@ -175,11 +175,6 @@
             return;
           }
           
-          if (data.type === "error") {
-            console.error('TTM Error:', data.error);
-            return;
-          }
-          
           if (data.type === "history" && data.data) {
             const threadId = data.data.id;
             if (threadId) {
