@@ -232,7 +232,8 @@
           }
 
           if (data.type === "presence") {
-            if (data.data.presence === "typing") {
+            if (data.data.status === "typing") {
+              alert('TTM: Agent is typing BITCH');
               this._displayPresence();
             } else {
               this._clearPresence();
