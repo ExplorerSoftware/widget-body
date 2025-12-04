@@ -1336,8 +1336,6 @@
       const presenceElement = document.createElement("div");
       presenceElement.className = `ttm-message-agent ttm-presence`;
       presenceElement.style.color = textColor;
-
-      presenceElement.style.border =`solid 1px ${isDark ? 'transparent' : '#d1d5db'}`;
       presenceElement.innerHTML = `
          <div 
             class="relative w-fit max-w-[80%] h-full rounded-xl px-2 py-2"
