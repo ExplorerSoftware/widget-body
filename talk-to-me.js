@@ -1344,7 +1344,7 @@
             style="
                 background: ${bubbleColor};
                 color: ${textColor};
-                border: solid 1px ${isDark ? 'transparent' : '#d1d5db'};
+                border: solid 1px ${isDark ? 'transparent' : '#d1d8db'};
             "
             >
 
