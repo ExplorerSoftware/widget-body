@@ -425,7 +425,7 @@
 
       _agentTypingAnimation() {
 
-        if (document.querySelector('ttm-agent-typing')) {
+        if (document.querySelector('.ttm-agent-typing')) {
           return;
         }
 
@@ -488,7 +488,7 @@
       }
 
       _clearAgentTypingAnimation() {
-        const agentTypingElement = document.querySelector('ttm-agent-typing');
+        const agentTypingElement = document.querySelector('.ttm-agent-typing');
         if (agentTypingElement) {
           agentTypingElement.remove();
         }
@@ -980,11 +980,6 @@
                         id="ttm-messages"
                         class="flex-1 p-2  flex flex-col gap-2 bg-transparent"
                     >
-                    <div
-                        id="ttm-agent-typing"
-                        class="p-2  flex flex-col gap-2 bg-transparent"
-                    >
-                    </div>
                     </div>
        
                     <div class="p-2 flex-shrink-0">
