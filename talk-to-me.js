@@ -424,19 +424,20 @@
       }
 
       _agentTypingAnimation() {
+        // Verificar se já existe para evitar duplicatas
         if (document.querySelector('.ttm-agent-typing')) {
           return;
         }
 
         const isDark = this.theme.theme === "dark";
-        const isTalkToMe = true;
+        const isTalkToMe = true; // É sempre do agente/TalkToMe
         
         const bubbleColor = isTalkToMe ? (isDark ? "#000000" : "#ebeaea") : "#000000";
         const dotColor = isTalkToMe ? (isDark ? "#ffffff" : "#000000") : "#ffffff";
 
-        const agentTypingElement = document.createElement('div');
-        agentTypingElement.className = 'ttm-message ttm-message-agent ttm-message-talk-to-me ttm-agent-typing';
-        
+        const agentTypingElement = document.createElement("div");
+        agentTypingElement.className = `ttm-message ttm-message-agent ttm-message-talk-to-me ttm-agent-typing`;
+
         agentTypingElement.innerHTML = `
           <div 
             class="relative w-fit max-w-[80%] h-full rounded-xl px-3 py-2 break-words"
@@ -478,6 +479,7 @@
         
         this.messagesContainer.appendChild(agentTypingElement);
         
+        // Scroll para o final
         if (this.messagesContainer && !this.userIsScrolling) {
           requestAnimationFrame(() => {
             this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
@@ -1261,6 +1263,12 @@
                 animation: ttm-slide-in 0.3s ease-in-out;
                 }
 
+                .ttm-agent-typing-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                }
+
                 @keyframes ttm-typing-dot {
                   0%, 60%, 100% {
                     transform: translateY(0);
@@ -1270,15 +1278,6 @@
                     transform: translateY(-8px);
                     opacity: 1;
                   }
-                }
-
-                .ttm-agent-typing-dot {
-                width: 8px;
-                height: 8px;
-                background: ${isDark ? "#ffffff" : "#000000"};
-                border-radius: 50%;
-                animation: ttm-typing-dot 1.4s infinite;
-                animation-delay: 0s;
                 }
 
                 @keyframes ttm-pulse {
@@ -1385,7 +1384,6 @@
         const isDark = this.theme.theme === "dark";
         const isCustomer = message.origin === "customer";
         const isTalkToMe = message.origin != "customer";
-        
         if (!isCustomer) {
           this._clearAgentTypingAnimation();
         }
