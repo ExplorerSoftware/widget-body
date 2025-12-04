@@ -131,6 +131,12 @@
       }
 
       _connectWebSocket() {
+        // ✅ Verifica se o canal está inativo ANTES de tentar conectar
+        if (this.channelInactive) {
+          console.log('TTM: Não conectando - canal inativo');
+          return;
+        }
+      
         const wsUrl = `${this.wsUrl}/ws/session:${this.sessionId}/${this.threadId || 'new'}?token=${this.token}`;
       
         this.ws = new WebSocket(wsUrl);
@@ -146,7 +152,8 @@
       
         this.ws.onopen = () => {
           clearTimeout(connectionTimeout);
-          this.channelInactive = false;
+          // ✅ REMOVIDO: this.channelInactive = false;
+          // Não reseta o estado de inativo se já foi marcado
           
           this._requestMetadata();
           
@@ -162,16 +169,16 @@
       
         this.ws.onclose = (e) => {
           clearTimeout(connectionTimeout);
-          alert('TTM: WebSocket fechado. Código: ' + e.code);
+          console.log('TTM: WebSocket fechado. Código: ' + e.code);
         
           if (e.code >= 4000 && e.code <= 4999) {
               this.channelInactive = true;
               this.ws = null;
         
               if (e.code === 4003) {
-                  alert('TTM: Canal inativo ou desativado');
+                  console.log('TTM: Canal inativo ou desativado');
               } else {
-                  alert('TTM: Canal indisponível');
+                  console.log('TTM: Canal indisponível');
               }
               return;
           }
@@ -226,7 +233,7 @@
             }
             this._clearPresence();
           }
-
+      
           if (data.type === "presence") {
             if (data.data.status === "typing") {
               this._displayPresence();
