@@ -1335,7 +1335,6 @@
 
       const presenceElement = document.createElement("div");
       presenceElement.className = `ttm-message-agent ttm-presence`;
-      presenceElement.style.background = bubbleColor;
       presenceElement.style.color = textColor;
 
       presenceElement.style.border =`solid 1px ${isDark ? 'transparent' : '#d1d5db'}`;
@@ -1357,6 +1356,13 @@
           </div>
         `
         this.messagesContainer.appendChild(presenceElement);
+
+        if (this.messagesContainer && !this.userIsScrolling) {
+          requestAnimationFrame(() => {
+          this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
+          });
+      }
+      
     }
 
       _clearPresence() {
