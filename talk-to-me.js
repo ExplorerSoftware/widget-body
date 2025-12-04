@@ -233,9 +233,9 @@
 
           if (data.type === "presence") {
             if (data.data.presence === "typing") {
-              this._agentTypingAnimation();
+              this._displayPresence();
             } else {
-              this._clearAgentTypingAnimation();
+              this._clearPresence();
             }
           }
       
@@ -423,76 +423,6 @@
         }
       }
 
-      _agentTypingAnimation() {
-
-        if (document.querySelector('.ttm-agent-typing')) {
-          return;
-        }
-
-        const isDark = this.theme.theme === "dark";
-        const isTalkToMe = true;
-        
-        const bubbleColor = isTalkToMe ? (isDark ? "#000000" : "#ebeaea") : "#000000";
-        const dotColor = isTalkToMe ? (isDark ? "#ffffff" : "#000000") : "#ffffff";
-
-        const agentTypingElement = document.createElement("div");
-        agentTypingElement.className = `ttm-message ttm-message-agent ttm-message-talk-to-me ttm-agent-typing`;
-
-        agentTypingElement.innerHTML = `
-          <div 
-            class="relative w-fit max-w-[80%] h-full rounded-xl px-3 py-2 break-words"
-            style="
-              background: ${bubbleColor};
-              color: ${dotColor};
-              border: solid 1px ${isDark ? 'transparent' : '#d1d5db'};
-              display: flex;
-              align-items: center;
-              gap: 4px;
-            "
-          >
-            <div class="ttm-agent-typing-dot" style="
-              width: 8px;
-              height: 8px;
-              background: ${dotColor};
-              border-radius: 50%;
-              animation: ttm-typing-dot 1.4s infinite;
-              animation-delay: 0s;
-            "></div>
-            <div class="ttm-agent-typing-dot" style="
-              width: 8px;
-              height: 8px;
-              background: ${dotColor};
-              border-radius: 50%;
-              animation: ttm-typing-dot 1.4s infinite;
-              animation-delay: 0.2s;
-            "></div>
-            <div class="ttm-agent-typing-dot" style="
-              width: 8px;
-              height: 8px;
-              background: ${dotColor};
-              border-radius: 50%;
-              animation: ttm-typing-dot 1.4s infinite;
-              animation-delay: 0.4s;
-            "></div>
-          </div>
-        `;
-        
-        this.messagesContainer.appendChild(agentTypingElement);
-        
-        // Scroll para o final
-        if (this.messagesContainer && !this.userIsScrolling) {
-          requestAnimationFrame(() => {
-            this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
-          });
-        }
-      }
-
-      _clearAgentTypingAnimation() {
-        const agentTypingElement = document.querySelector('.ttm-agent-typing');
-        if (agentTypingElement) {
-          agentTypingElement.remove();
-        }
-      }
 
       async _sendMessage(textOverride = null, files = null) {
         const text = textOverride || this.inputField.value;
@@ -1259,27 +1189,42 @@
 
                 .ttm-agent-typing {
                 display: flex;
-                align-items: flex-start;
-                justify-content: flex-start;
-                animation: ttm-slide-in 0.3s ease-in-out;
+                align-items: center;
+                justify-content: center;
+                gap: 4px;
                 }
 
                 .ttm-agent-typing-dot {
                 width: 8px;
                 height: 8px;
                 border-radius: 50%;
+                background-color: ${isDark ? "#ffffff" : "#000000"};
+                animation: ttm-typing-dot 1.4s infinite ease-in-out;
+                }
+
+                .ttm-agent-typing-dot:nth-child(1) {
+                    animation-delay: 0s;
+                }
+
+                .ttm-agent-typing-dot:nth-child(2) {
+                    animation-delay: 0.2s;
+                }
+
+                .ttm-agent-typing-dot:nth-child(3) {
+                    animation-delay: 0.4s;
                 }
 
                 @keyframes ttm-typing-dot {
-                  0%, 60%, 100% {
-                    transform: translateY(0);
-                    opacity: 0.7;
-                  }
-                  30% {
-                    transform: translateY(-8px);
-                    opacity: 1;
-                  }
+                    0%, 60%, 100% {
+                        opacity: 0.3;
+                        transform: scale(0.8);
+                    }
+                    30% {
+                        opacity: 1;
+                        transform: scale(1);
+                    }
                 }
+
 
                 @keyframes ttm-pulse {
         
@@ -1381,13 +1326,50 @@
         }
       }
 
+
+    _displayPresence() {
+      const isDark = this.theme.theme === "dark";
+
+      const bubbleColor =  (isDark ? "#000000" : "#ebeaea"); 
+      const textColor = (isDark ? "#ffffff" : "#000000");  
+
+      const presenceElement = document.createElement("div");
+      presenceElement.className = `ttm-message ttm-message-agent ttm-message-talk-to-me`;
+      presenceElement.style.background = bubbleColor;
+      presenceElement.style.color = textColor;
+
+      presenceElement.style.border =`solid 1px ${isDark ? 'transparent' : '#d1d5db'}`;
+      presenceElement.innerHTML = `
+         <div 
+            class="relative w-fit max-w-[80%] h-full rounded-xl px-2 py-2 break-words"
+            style="
+                background: ${bubbleColor};
+                color: ${textColor};
+                border: solid 1px ${isDark ? 'transparent' : '#d1d5db'};
+            "
+            >
+
+            <div class="ttm-agent-typing">
+                <div class="ttm-agent-typing-dot"></div>
+                <div class="ttm-agent-typing-dot"></div>
+                <div class="ttm-agent-typing-dot"></div>
+           </div>
+          </div>
+        `
+        this.messagesContainer.appendChild(presenceElement);
+    }
+
+      _clearPresence() {
+        const presenceElement = document.querySelector('.ttm-message.ttm-message-agent.ttm-message-talk-to-me');
+        if (presenceElement) {
+          presenceElement.remove();
+        }
+      }
+
       _displayMessage(message) {
         const isDark = this.theme.theme === "dark";
         const isCustomer = message.origin === "customer";
         const isTalkToMe = message.origin != "customer";
-        if (!isCustomer) {
-          this._clearAgentTypingAnimation();
-        }
 
         const messageElement = document.createElement("div");
 
@@ -1586,6 +1568,7 @@
             ${ message.origin === "AI" && message.metadata?.ai_agent?.name ? `<span class="text-xs m-0 mt-1 whitespace-normal break-words" style="opacity: 0.7; color: ${textColor};">${message.metadata.ai_agent.name}</span>` : ""}
         `;
 
+     
         this.messagesContainer.appendChild(messageElement);
         this.lucide.createIcons();
         this._initAudioPlayers();
@@ -1634,6 +1617,7 @@
             }
         }
     }
+
   
     window.TalkToMeChat = TalkToMeChat;
   })(window);
