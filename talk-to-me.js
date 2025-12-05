@@ -1054,6 +1054,14 @@
                 const firstStepContainer = document.getElementById("ttm-first-step-container");
                 const messagesContainer = document.querySelector('[id^="ttm-messages"]')?.parentElement;
 
+                if (firstStepButton) {
+                  const isDark = this.theme.theme === "dark";
+                  firstStepButton.style.background = isDark ? '#ffffff' : '#000000';
+                  firstStepButton.style.border = 'none';
+                  firstStepButton.style.color = isDark ? '#000000' : '#ffffff';
+                  firstStepButton.style.cursor = 'pointer';
+              }
+
                 firstStepButton.addEventListener("click", (e) => {
                     e.preventDefault();
                     e.stopPropagation();
