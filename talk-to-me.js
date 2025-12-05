@@ -330,8 +330,10 @@
             const avatarsContainer = document.createElement('div');
             avatarsContainer.className = 'flex ml-[10px] items-center';
             avatarsContainer.style.marginTop = '0.25rem';
+
+            const validLogos = this.theme.logos_url.filter(logo => logo !== null && logo !== undefined && logo !== '');
             
-            this.theme.logos_url.forEach((logo, index) => {
+            validLogos.forEach((logo, index) => {
               const avatarDiv = document.createElement('div');
               avatarDiv.className = 'w-[2.5rem] h-[2.5rem] rounded-full border-2 flex items-center justify-center flex-shrink-0';
               avatarDiv.style.background = isDark ? '#494949' : '#d4d4d4';
