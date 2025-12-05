@@ -1263,6 +1263,13 @@
                 border-radius: 4px;
                 }
 
+                #ttm-first-step-button {
+                  background: ${isDark ? '#ffffff' : '#000000'} !important;
+                  border: none !important;
+                  color: ${isDark ? '#000000' : '#ffffff'} !important;
+                  cursor: pointer !important;
+                }
+
                 .ttm-agent-typing {
                 display: flex;
                 align-items: center;
