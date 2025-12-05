@@ -313,18 +313,25 @@
 
           const titleElement = header.querySelector('h3');
 
-          const existingAvatars = header.querySelectorAll('.mt-1.w-\\[2\\.5rem\\].h-\\[2\\.5rem\\].rounded-full.border-2');
+
+          const existingAvatarsContainer = header.querySelector('.flex.ml-\\[10px\\].items-center');
+          if (existingAvatarsContainer) {
+            existingAvatarsContainer.remove();
+          }
+
+
+          const existingAvatars = header.querySelectorAll('.w-\\[2\\.5rem\\].h-\\[2\\.5rem\\].rounded-full.border-2');
           existingAvatars.forEach(avatar => {
             avatar.remove();
           });
 
-          if (Array.isArray(this.theme.logos_url) && this.theme.logos_url.length > 0) {
+          if (Array.isArray(this.theme.logos_url) && this.theme.logos_url.length > 0 ) {
 
             const avatarsContainer = document.createElement('div');
             avatarsContainer.className = 'flex ml-[10px] items-center';
             avatarsContainer.style.marginTop = '0.25rem';
             
-            this.theme.logos_url.slice(0, 3).forEach((logo, index) => {
+            this.theme.logos_url.forEach((logo, index) => {
               const avatarDiv = document.createElement('div');
               avatarDiv.className = 'w-[2.5rem] h-[2.5rem] rounded-full border-2 flex items-center justify-center flex-shrink-0';
               avatarDiv.style.background = isDark ? '#494949' : '#d4d4d4';
@@ -722,7 +729,6 @@
           this.ws.close();
         }
         this.ws = null;
-        // Ocultar o chat quando o WebSocket for fechado
         if (this.container) {
           this.container.style.display = 'none';
         }
