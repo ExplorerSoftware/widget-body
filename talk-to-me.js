@@ -861,6 +861,14 @@
 
             const iconName = this.theme.icon || "message-circle";
 
+            // Preparar estilo do background do container de mensagens
+            let messagesBackgroundStyle = '';
+            if (this.theme.wallpaper_url) {
+              messagesBackgroundStyle = `background-image: url(${this.theme.wallpaper_url}); background-size: cover; background-position: center;`;
+            } else {
+              messagesBackgroundStyle = `background: ${this.theme.bodyColor || ''};`;
+            }
+
             this.container.innerHTML = `
                     <div
                     id="ttm-chat-window"
@@ -944,7 +952,7 @@
                     ` : ` `}
                     <div
                     class="flex-1 flex overflow-y-auto flex-col"
-                      style="display: ${this.userName ? 'flex' : 'none'}; ${this.theme.wallpaper_url ? `background-image: url(${this.theme.wallpaper_url}); background-size: cover; background-position: center;` : `background: ${this.theme.bodyColor || ''};`}"
+                      style="display: ${this.userName ? 'flex' : 'none'}; ${messagesBackgroundStyle}"
                     >
                     <div
                         id="ttm-messages"
@@ -1394,6 +1402,36 @@
         const nameElement = this.chatContent?.querySelector('h3');
         if (nameElement) {
           nameElement.textContent = this.theme.name || "Chat";
+        }
+
+        const messagesContainer = this.chatContent?.querySelector('.flex-1.flex.overflow-y-auto.flex-col');
+        if (messagesContainer) {
+          if (this.theme.wallpaper_url) {
+            messagesContainer.style.backgroundImage = `url(${this.theme.wallpaper_url})`;
+            messagesContainer.style.backgroundSize = 'cover';
+            messagesContainer.style.backgroundPosition = 'center';
+            messagesContainer.style.background = '';
+          } else {
+            messagesContainer.style.backgroundImage = '';
+            messagesContainer.style.backgroundSize = '';
+            messagesContainer.style.backgroundPosition = '';
+            messagesContainer.style.background = this.theme.bodyColor || '';
+          }
+        }
+
+        const firstStepContainer = document.getElementById('ttm-first-step-container');
+        if (firstStepContainer) {
+          if (this.theme.wallpaper_url) {
+            firstStepContainer.style.backgroundImage = `url(${this.theme.wallpaper_url})`;
+            firstStepContainer.style.backgroundSize = 'cover';
+            firstStepContainer.style.backgroundPosition = 'center';
+            firstStepContainer.style.background = '';
+          } else {
+            firstStepContainer.style.backgroundImage = '';
+            firstStepContainer.style.backgroundSize = '';
+            firstStepContainer.style.backgroundPosition = '';
+            firstStepContainer.style.background = this.theme.bodyColor || '';
+          }
         }
       }
 
