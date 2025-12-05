@@ -927,7 +927,7 @@
                       <input
                         type="text"
                         id="ttm-first-step-input"
-                        class="w-[80%] h-12 border-none text-center text-base rounded-lg font-normal mt-[0.9rem] ml-1"
+                        class="w-[80%] h-12 border-none text-center text-base rounded-lg font-normal mt-[0.9rem] "
                         placeholder="Qual é o seu nome?"
                         maxlength="1000"
                         style="color: ${isDark ? '#ffffff' : '#000000'}; background: ${isDark ? '#212224' : '#e9e9e9'};"
@@ -944,7 +944,7 @@
                     ` : ` `}
                     <div
                     class="flex-1 flex overflow-y-auto flex-col"
-                      style="display: ${this.userName ? 'flex' : 'none'}; ${this.theme.wallpaper_url ? `background-image: url(${this.theme.wallpaper_url}); background-size: cover; background-position: center;` : ''} ${this.theme.bodyColor ? `background-color: ${this.theme.bodyColor};` : ''}"
+                      style="display: ${this.userName ? 'flex' : 'none'}; ${this.theme.wallpaper_url ? `background-image: url(${this.theme.wallpaper_url}); background-size: cover; background-position: center;` : `background: ${this.theme.bodyColor || ''};`}"
                     >
                     <div
                         id="ttm-messages"
