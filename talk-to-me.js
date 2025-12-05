@@ -324,10 +324,11 @@
             avatarsContainer.className = 'flex ml-[10px] items-center';
             avatarsContainer.style.marginTop = '0.25rem';
             
-            this.theme.logos_url.forEach((logo, index) => {
+            this.theme.logos_url.slice(0, 3).forEach((logo, index) => {
               const avatarDiv = document.createElement('div');
               avatarDiv.className = 'w-[2.5rem] h-[2.5rem] rounded-full border-2 flex items-center justify-center flex-shrink-0';
               avatarDiv.style.background = isDark ? '#494949' : '#d4d4d4';
+              
 
               if (index > 0) {
                 avatarDiv.style.marginLeft = '-14px';
@@ -921,10 +922,10 @@
                       <input
                         type="text"
                         id="ttm-first-step-input"
-                        class="w-[80%] h-12 border-none ttm-input text-center text-base font-normal mt-[0.9rem] ml-1"
+                        class="w-[80%] h-12 border-none text-center text-base rounded-lg font-normal mt-[0.9rem] ml-1"
                         placeholder="Qual é o seu nome?"
                         maxlength="1000"
-                        style="color: ${isDark ? '#ffffff' : '#000000'};"
+                        style="color: ${isDark ? '#ffffff' : '#000000'}; background: ${isDark ? '#212224' : '#e9e9e9'};"
                       >
                       <button
                         type="button"
