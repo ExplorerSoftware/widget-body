@@ -14,6 +14,7 @@
         this.sessionId = this._generateSessionId();
         this.isOpen = false;
         this.userIdentifier = this._getUserIdentifier();
+        this.userName = null;
         this.container = null;
         this.chatWindow = null;
         this.messagesContainer = null;
@@ -430,7 +431,7 @@
       async _sendMessage(textOverride = null, files = null) {
         const text = textOverride || this.inputField.value;
         const origin = window.location.hostname || window.location.host || '';
-        const username = `user_${this.userIdentifier}_${origin}`;
+        const username = this.userName;
         
         if (!text) return;
 
@@ -909,8 +910,29 @@
                     </button>
                     </div>
                     <div
+                      id="ttm-first-step-container"
+                      class="flex-1 flex overflow-y-auto flex-col items-center justify-center"
+                      style=" background: ${this.theme.bodyColor};"
+                    >
+                      <input
+                        type="text"
+                        id="ttm-first-step-input"
+                        class="w-full h-full border-none bg-transparent text-center text-base font-normal mt-[0.9rem] ml-1"
+                        placeholder="Qual é o seu nome?"
+                        maxlength="1000"
+                      >
+                      <button
+                        type="button"
+                        id="ttm-first-step-button"
+                        class="w-fit h-auto border-none  text-center text-base font-normal rounded-full px-4 py-2"
+                        style=" background: ${isDark ? '#ffffff' : '#000000'}; border: none; color: ${isDark ? '#000000' : '#ffffff'};"
+                      >
+                        ok
+                      </button>
+                    </div>
+                    <div
                     class="flex-1 flex overflow-y-auto flex-col"
-                    style="${this.theme.wallpaper_url ? `background-image: url(${this.theme.wallpaper_url}); background-size: cover; background-position: center;` : this.theme.bodyColor ? `background: ${this.theme.bodyColor};` : ''}"
+                    style="display: ${this.userName ? 'flex' : 'none'}; ${this.theme.wallpaper_url ? `background-image: url(${this.theme.wallpaper_url}); background-size: cover; background-position: center;` : this.theme.bodyColor ? `background: ${this.theme.bodyColor};` : ''}"
                     >
                     <div
                         id="ttm-messages"
@@ -1008,6 +1030,37 @@
                     e.target.style.height = newHeight + "px";
                     this._updateSendButtonIcon();
                 });
+
+
+                const firstStepInput = document.getElementById("ttm-first-step-input");
+                const firstStepButton = document.getElementById("ttm-first-step-button");
+                const firstStepContainer = document.getElementById("ttm-first-step-container");
+                const messagesContainer = document.querySelector('[id^="ttm-messages"]')?.parentElement;
+
+                firstStepButton.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.userName = firstStepInput.value;
+
+                    const name = firstStepInput.value.trim();
+                    if (name) {
+                      this.userName = name;
+
+                      if (firstStepContainer) {
+                          firstStepContainer.style.display = 'none';
+                      }
+                      if (messagesContainer) {
+                          messagesContainer.style.display = 'flex';
+                      }
+                  }
+                })
+              
+                firstStepInput.addEventListener("keypress", (e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    firstStepButton.click();
+                  }
+                })
             }
 
       _updateSendButtonIcon() {
