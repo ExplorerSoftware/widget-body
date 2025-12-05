@@ -909,6 +909,7 @@
                         ></i>
                     </button>
                     </div>
+                    ${this.userName === null ? `
                     <div
                       id="ttm-first-step-container"
                       class="flex-1 flex overflow-y-auto flex-col items-center justify-center"
@@ -917,19 +918,21 @@
                       <input
                         type="text"
                         id="ttm-first-step-input"
-                        class="w-full h-full border-none bg-transparent text-center text-base font-normal mt-[0.9rem] ml-1"
+                        class="w-[80%] h-12 border-none bg-transparent text-center text-base font-normal mt-[0.9rem] ml-1"
                         placeholder="Qual é o seu nome?"
                         maxlength="1000"
+                        style="color: ${isDark ? '#ffffff' : '#000000'};"
                       >
                       <button
                         type="button"
                         id="ttm-first-step-button"
-                        class="w-fit h-auto border-none  text-center text-base font-normal rounded-full px-4 py-2"
+                        class="w-fit h-auto border-none mt-2  text-center text-base font-normal rounded-lg px-4 py-1"
                         style=" background: ${isDark ? '#ffffff' : '#000000'}; border: none; color: ${isDark ? '#000000' : '#ffffff'};"
                       >
                         ok
                       </button>
                     </div>
+                    ` : ` `}
                     <div
                     class="flex-1 flex overflow-y-auto flex-col"
                     style="display: ${this.userName ? 'flex' : 'none'}; ${this.theme.wallpaper_url ? `background-image: url(${this.theme.wallpaper_url}); background-size: cover; background-position: center;` : this.theme.bodyColor ? `background: ${this.theme.bodyColor};` : ''}"
