@@ -941,9 +941,9 @@
                         type="button"
                         id="ttm-first-step-button"
                         class="w-fit h-auto border-none mt-2  text-center text-base font-normal rounded-lg px-4 py-1"
-                        style=" background: ${isDark ? '#ffffff' : '#000000'}; border: none; color: ${isDark ? '#000000' : '#ffffff'};"
+                        style="background: ${isDark ? '#ffffff' : '#000000'}; border: none; color: ${isDark ? '#000000' : '#ffffff'}; cursor: pointer;"
                       >
-                        ok
+                        Ok
                       </button>
                     </div>
                     ` : ` `}
