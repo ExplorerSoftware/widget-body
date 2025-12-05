@@ -893,15 +893,14 @@
                         <span class="text-[11px] text-white font-semibold leading-none">0</span>
                     </div>
                     <div
-                        id="ttm-chat-content"
-                        class="flex flex-col h-full"
-                        style="opacity: 0; pointer-events: none; display: none; position: relative;"
-                        >
-                        <div
+                      id="ttm-chat-content"
+                      class="flex flex-col h-full"
+                      style="opacity: 0; pointer-events: none; display: none; position: relative;"
+                    >
+                      <div
                         class="p-1 flex items-start gap-2 flex-shrink-0"
                         style="background: ${this.theme.headerColor};  border-bottom: 1px solid ${isDark ? '#565656' : '#d1d5db'};"
-                        >
-                  
+                      >
                     <h3
                         class="flex-1 text-base font-normal mt-[0.9rem] ml-1"
                         style="color: ${isDark ? 'white' : 'black'};"
@@ -945,7 +944,7 @@
                     ` : ` `}
                     <div
                     class="flex-1 flex overflow-y-auto flex-col"
-                    style="display: ${this.userName ? 'flex' : 'none'}; ${this.theme.wallpaper_url ? `background-image: url(${this.theme.wallpaper_url}); background-size: cover; background-position: center;` : this.theme.bodyColor ? `background: ${this.theme.bodyColor};` : ''}"
+                      style="display: ${this.userName ? 'flex' : 'none'}; ${this.theme.wallpaper_url ? `background-image: url(${this.theme.wallpaper_url}); background-size: cover; background-position: center;` : ''} ${this.theme.bodyColor ? `background-color: ${this.theme.bodyColor};` : ''}"
                     >
                     <div
                         id="ttm-messages"
