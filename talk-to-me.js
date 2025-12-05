@@ -415,6 +415,13 @@
           }
         }
         
+        // Adicionar esta seção para atualizar o botão do primeiro passo
+        const firstStepButton = document.getElementById("ttm-first-step-button");
+        if (firstStepButton) {
+          firstStepButton.style.background = isDark ? '#ffffff' : '#000000';
+          firstStepButton.style.color = isDark ? '#000000' : '#ffffff';
+        }
+        
         const inputContainerParent = inputContainer?.parentElement;
         
         if (inputContainerParent) {
