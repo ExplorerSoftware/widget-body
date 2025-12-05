@@ -371,15 +371,18 @@
           }
         }
         
-        const messagesArea = this.chatContent?.querySelector('.flex-1.flex.overflow-y-auto');
-        if (messagesArea) {
-          if (this.theme.wallpaper_url) {
-            messagesArea.style.backgroundImage = `url(${this.theme.wallpaper_url})`;
-            messagesArea.style.backgroundSize = 'cover';
-            messagesArea.style.backgroundPosition = 'center';
-          } else {
-            messagesArea.style.background = this.theme.bodyColor;
-          }
+
+        const allMessageAreas = this.chatContent?.querySelectorAll('.flex-1.flex.overflow-y-auto');
+        if (allMessageAreas) {
+          allMessageAreas.forEach(area => {
+            if (this.theme.wallpaper_url) {
+              area.style.backgroundImage = `url(${this.theme.wallpaper_url})`;
+              area.style.backgroundSize = 'cover';
+              area.style.backgroundPosition = 'center';
+            } else {
+              area.style.background = this.theme.bodyColor;
+            }
+          });
         }
         
         const inputContainer = this.chatContent?.querySelector('.flex.flex-col.p-1.gap-0');
