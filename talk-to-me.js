@@ -498,7 +498,237 @@
         }));
       }
 
+      _initAudioPlayers() {
+        document.querySelectorAll('.ttm-audio-player').forEach(async (player) => {
+        const playBtn = player.querySelector('.ttm-audio-play-btn');
+        const audioElement = player.querySelector('.ttm-audio-element');
+        const progressBar = player.querySelector('.ttm-audio-waveform');
+        const currentTimeEl = player.querySelector('.ttm-audio-current-time');
+        const durationEl = player.querySelector('.ttm-audio-duration');
+        const isTalkToMe = player.closest('.ttm-message-talk-to-me');
+        const isCustomer = player.closest('.ttm-message-customer');
 
+
+        if (player.dataset.waveformProcessed) return;
+        player.dataset.waveformProcessed = 'true';
+
+        const firstBar = progressBar.querySelector('.ttm-waveform-bar');
+        const barBg = window.getComputedStyle(firstBar).backgroundColor;
+        const isDark = barBg.includes('0, 0, 0') || barBg.includes('rgb(0');
+
+        let isPlaying = false;
+
+        const audioUrl = audioElement.querySelector('source').src;
+        const waveformData = await this._generateWaveformData(audioUrl, 30);
+
+        const backgroundBars = progressBar.querySelectorAll('.ttm-waveform-bar');
+
+        waveformData.forEach((height, index) => {
+            if (backgroundBars[index]) {
+                backgroundBars[index].style.height = `${height}%`;
+            }
+        });
+
+        const formatTime = (seconds) => {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        };
+
+        audioElement.load();
+
+        audioElement.addEventListener('loadedmetadata', () => {
+            durationEl.textContent = formatTime(audioElement.duration);
+        });
+
+        audioElement.addEventListener('timeupdate', () => {
+            const progress = (audioElement.currentTime / audioElement.duration) * 100;
+            const bars = progressBar.querySelectorAll('.ttm-waveform-bar');
+            const barsToFill = Math.floor((progress / 100) * bars.length);
+
+            bars.forEach((bar, index) => {
+              if (index < barsToFill) {
+                  bar.style.background = isTalkToMe ? (isDark ? '#ffffff' : '#000000') : (isCustomer ? (isDark ? '#000000' : '#ffffff') : '#909090');
+              } else {
+                  bar.style.background = '#909090';
+              }
+          });
+            currentTimeEl.textContent = formatTime(audioElement.currentTime);
+        });
+
+        audioElement.addEventListener('ended', () => {
+            isPlaying = false;
+            const playIcon = playBtn.querySelector('i, svg');
+            if (playIcon) {
+                playIcon.setAttribute('data-lucide', 'play');
+                playIcon.style.marginLeft = '2px';
+            }
+
+            const bars = progressBar.querySelectorAll('.ttm-waveform-bar');
+            bars.forEach(bar => {
+                bar.style.background = '#909090';
+            });
+
+            currentTimeEl.textContent = '0:00';
+            this.lucide.createIcons();
+        });
+
+        playBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const playIcon = playBtn.querySelector('i, svg');
+
+            if (isPlaying) {
+                audioElement.pause();
+                playIcon.setAttribute('data-lucide', 'play');
+                playIcon.style.marginLeft = '2px';
+            } else {
+                document.querySelectorAll('.ttm-audio-element').forEach(audio => {
+                    if (audio !== audioElement) {
+                        audio.pause();
+                        const otherPlayBtn = audio.closest('.ttm-audio-player').querySelector('.ttm-audio-play-btn');
+                        const otherIcon = otherPlayBtn.querySelector('i, svg');
+                        if (otherIcon) {
+                            otherIcon.setAttribute('data-lucide', 'play');
+                            otherIcon.style.marginLeft = '2px';
+                        }
+                    }
+                });
+
+                audioElement.play();
+                playIcon.setAttribute('data-lucide', 'pause');
+                playIcon.style.marginLeft = '0';
+            }
+
+            isPlaying = !isPlaying;
+            this.lucide.createIcons();
+        });
+
+            progressBar.addEventListener('click', (e) => {
+                const rect = progressBar.getBoundingClientRect();
+                const percent = (e.clientX - rect.left) / rect.width;
+                audioElement.currentTime = percent * audioElement.duration;
+            });
+        });
+    }
+
+    async _generateWaveformData(audioUrl, barCount = 30) {
+          const response = await fetch(audioUrl);
+          const arrayBuffer = await response.arrayBuffer();
+
+          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+          const rawData = audioBuffer.getChannelData(0);
+          const samples = barCount;
+          const blockSize = Math.floor(rawData.length / samples);
+          const filteredData = [];
+
+          for (let i = 0; i < samples; i++) {
+            let blockStart = blockSize * i;
+            let sum = 0;
+            for (let j = 0; j < blockSize; j++) {
+              sum += Math.abs(rawData[blockStart + j]);
+            }
+            filteredData.push(sum / blockSize);
+          }
+
+          const max = Math.max(...filteredData);
+          const min = Math.min(...filteredData);
+          const range = max - min;
+
+          const normalizedData = filteredData.map(val => {
+            if (range === 0) return 20;
+            const normalized = ((val - min) / range);
+            return Math.floor(normalized * 60) + 20;
+          });
+
+          audioContext.close();
+          return normalizedData;
+      }
+
+    _audioRecorder(stream) {
+        const mimeTypes = [
+            'audio/ogg; codecs=opus',
+            'audio/webm; codecs=opus',
+            'audio/webm'
+          ];
+
+        const mimeType = mimeTypes.find(type => MediaRecorder.isTypeSupported(type)) || '';
+
+        const audioRecorder = new MediaRecorder(stream, { mimeType });
+
+        let recordingSeconds = 0;
+        this.recordingInterval = setInterval(() => {
+          recordingSeconds++;
+          const mins = Math.floor(recordingSeconds / 60);
+          const secs = recordingSeconds % 60;
+          const time = `${mins}:${secs.toString().padStart(2, '0')}`;
+          this._setRecordingButtonStyle(true, time);
+        }, 1000);
+
+        this._setRecordingButtonStyle(true, '0:00');
+
+        audioRecorder.addEventListener("dataavailable", (e) => {
+            if (e.data.size > 0) {
+                const extension = mimeType.includes('ogg') ? 'ogg' : 'webm';
+                const file = new File([e.data], `audio.${extension}`, { type: mimeType })
+                this._sendMessage(null, [file])
+            }
+        })
+
+        audioRecorder.addEventListener("stop", () => {
+
+          if (this.recordingInterval) {
+            clearInterval(this.recordingInterval);
+            this.recordingInterval = null;
+          }
+
+          this._setRecordingButtonStyle(false, '0:00');
+          this.activeRecorder = null;
+          stream.getTracks().forEach(track => track.stop());
+          this.audioStream = null;
+        })
+        audioRecorder.start()
+        return audioRecorder
+      }
+
+    _setRecordingButtonStyle(isRecording, recordingTime = '0:00') {
+      if (!this.sendButton) return;
+
+      const isDark = this.theme.theme === "dark";
+
+      if (isRecording) {
+
+        if (!this.originalPlaceholder) {
+          this.originalPlaceholder = this.inputField.placeholder;
+        }
+
+          this.sendButton.style.background = '#ef4444';
+          this.sendButton.style.animation = 'ttm-pulse 1.5s ease-in-out infinite';
+          this.sendButton.innerHTML = `<i data-lucide="stop" style="width: 16px; height: 16px; color: #ffffff;"></i>`;
+          this.inputField.placeholder = `Gravando... ${recordingTime}`;
+
+      } else {
+          this.sendButton.style.background = isDark ? "#ffffff" : "#000000";
+          this.sendButton.style.border = "none";
+          this.sendButton.style.animation = "";
+
+          if (this.originalPlaceholder) {
+            this.inputField.placeholder = this.originalPlaceholder;
+            this.originalPlaceholder = null;
+          }
+
+          this._updateSendButtonIcon(); 
+      }
+      this.lucide.createIcons();
+      const stopIcon = this.sendButton.querySelector('svg');
+      if (stopIcon) {
+          stopIcon.style.stroke = '#ffffff';
+          stopIcon.style.color = '#ffffff';
+      }
+    }
 
       _closeWebSocket() {
         if (this.ws && this.ws.readyState === WebSocket.OPEN) {
