@@ -861,14 +861,6 @@
 
             const iconName = this.theme.icon || "message-circle";
 
-            // Preparar estilo do background do container de mensagens
-            let messagesBackgroundStyle = '';
-            if (this.theme.wallpaper_url) {
-              messagesBackgroundStyle = `background-image: url(${this.theme.wallpaper_url}); background-size: cover; background-position: center;`;
-            } else {
-              messagesBackgroundStyle = `background: ${this.theme.bodyColor || ''};`;
-            }
-
             this.container.innerHTML = `
                     <div
                     id="ttm-chat-window"
@@ -930,12 +922,11 @@
                     <div
                       id="ttm-first-step-container"
                       class="flex-1  flex overflow-y-auto flex-col items-center justify-center"
-                      style=" background: ${this.theme.bodyColor};"
                     >
                       <input
                         type="text"
                         id="ttm-first-step-input"
-                        class="w-[80%] h-12 border-none text-center text-base rounded-lg font-normal mt-[0.9rem] "
+                        class="w-[80%] h-12 border-none text-center text-base rounded-lg font-normal mt-[0.9rem] ml-1"
                         placeholder="Qual é o seu nome?"
                         maxlength="1000"
                         style="color: ${isDark ? '#ffffff' : '#000000'}; background: ${isDark ? '#212224' : '#e9e9e9'};"
@@ -952,7 +943,7 @@
                     ` : ` `}
                     <div
                     class="flex-1 flex overflow-y-auto flex-col"
-                      style="display: ${this.userName ? 'flex' : 'none'}; ${messagesBackgroundStyle}"
+                      style="display: ${this.userName ? 'flex' : 'none'}; "
                     >
                     <div
                         id="ttm-messages"
@@ -1402,36 +1393,6 @@
         const nameElement = this.chatContent?.querySelector('h3');
         if (nameElement) {
           nameElement.textContent = this.theme.name || "Chat";
-        }
-
-        const messagesContainer = this.chatContent?.querySelector('.flex-1.flex.overflow-y-auto.flex-col');
-        if (messagesContainer) {
-          if (this.theme.wallpaper_url) {
-            messagesContainer.style.backgroundImage = `url(${this.theme.wallpaper_url})`;
-            messagesContainer.style.backgroundSize = 'cover';
-            messagesContainer.style.backgroundPosition = 'center';
-            messagesContainer.style.background = '';
-          } else {
-            messagesContainer.style.backgroundImage = '';
-            messagesContainer.style.backgroundSize = '';
-            messagesContainer.style.backgroundPosition = '';
-            messagesContainer.style.background = this.theme.bodyColor || '';
-          }
-        }
-
-        const firstStepContainer = document.getElementById('ttm-first-step-container');
-        if (firstStepContainer) {
-          if (this.theme.wallpaper_url) {
-            firstStepContainer.style.backgroundImage = `url(${this.theme.wallpaper_url})`;
-            firstStepContainer.style.backgroundSize = 'cover';
-            firstStepContainer.style.backgroundPosition = 'center';
-            firstStepContainer.style.background = '';
-          } else {
-            firstStepContainer.style.backgroundImage = '';
-            firstStepContainer.style.backgroundSize = '';
-            firstStepContainer.style.backgroundPosition = '';
-            firstStepContainer.style.background = this.theme.bodyColor || '';
-          }
         }
       }
 
