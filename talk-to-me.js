@@ -246,7 +246,10 @@
           if (data.type === "finish") {
             this._clearThreadData();
             this._closeWebSocket();
-            this._connectWebSocket();
+            setTimeout(() => {
+              alert("TENTANDO RECONEXÃO...");
+              this._connectWebSocket();
+            }, 100);
           }
         };
       }
@@ -912,13 +915,13 @@
                     ${this.userName === null ? `
                     <div
                       id="ttm-first-step-container"
-                      class="flex-1 flex overflow-y-auto flex-col items-center justify-center"
+                      class="flex-1  flex overflow-y-auto flex-col items-center justify-center"
                       style=" background: ${this.theme.bodyColor};"
                     >
                       <input
                         type="text"
                         id="ttm-first-step-input"
-                        class="w-[80%] h-12 border-none bg-transparent text-center text-base font-normal mt-[0.9rem] ml-1"
+                        class="w-[80%] h-12 border-none ttm-input text-center text-base font-normal mt-[0.9rem] ml-1"
                         placeholder="Qual é o seu nome?"
                         maxlength="1000"
                         style="color: ${isDark ? '#ffffff' : '#000000'};"
