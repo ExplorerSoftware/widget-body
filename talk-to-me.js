@@ -14,7 +14,7 @@
       this.sessionId = this._generateSessionId();
       this.isOpen = false;
       this.userIdentifier = this._getUserIdentifier();
-      this.userName = null;
+      this.userName = localStorage.getItem("ttm_user_name") || null; // Recuperar do localStorage
       this.container = null;
       this.chatWindow = null;
       this.messagesContainer = null;
@@ -192,15 +192,17 @@
       this.ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
         
+        // Define externalThreadId at the handler level so it's available throughout
+        const externalThreadId = data.external_id;
+        
         if (data.type === "metadata" && data.data) {
           this._handleMetadata(data.data);
           return;
         }
         
         if (data.type === "history" && data.data) {
-          const threadId = data.data.id;
-          if (threadId) {
-            this.threadId = threadId;
+          if (externalThreadId) {
+            this.threadId = externalThreadId;
             localStorage.setItem("ttm_thread_id", this.threadId);
           }
           if (data.data.messages && Array.isArray(data.data.messages)) {
@@ -215,9 +217,8 @@
     
         if (data.type === "message" && data.data) {
           const message = data.data;
-          const threadId = message.thread_id;
-          if (threadId) {
-            this.threadId = threadId;
+          if (externalThreadId) {
+            this.threadId = externalThreadId;
             localStorage.setItem("ttm_thread_id", this.threadId);
           }
           if (this.messagesLoaded) {
@@ -750,6 +751,7 @@
     _clearThreadData() {
       localStorage.removeItem("ttm_thread_id");
       localStorage.removeItem("ttm_user_id");
+      localStorage.removeItem("ttm_user_name"); // Limpar também o nome quando limpar thread
 
       this.threadId = null;
       this.messagesLoaded = false;
@@ -757,6 +759,7 @@
       this.messagesQueue = [];
       this.pendingWebSocketMessages = [];
       this.userIdentifier = this._getUserIdentifier();
+      this.userName = null; // Resetar o userName também
 
       this._updateNotificationCounter();
 
@@ -1076,6 +1079,7 @@
                   const name = firstStepInput.value.trim();
                   if (name) {
                     this.userName = name;
+                    localStorage.setItem("ttm_user_name", name); // Salvar no localStorage
 
                     if (firstStepContainer) {
                         firstStepContainer.style.display = 'none';
