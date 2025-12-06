@@ -192,13 +192,15 @@
         this.ws.onmessage = (event) => {
           const data = JSON.parse(event.data);
           
+          // Define externalThreadId at the handler level so it's available throughout
+          const externalThreadId = data.external_id;
+          
           if (data.type === "metadata" && data.data) {
             this._handleMetadata(data.data);
             return;
           }
           
           if (data.type === "history" && data.data) {
-            const externalThreadId = data.external_id;
             if (externalThreadId) {
               this.threadId = externalThreadId;
               localStorage.setItem("ttm_thread_id", this.threadId);
@@ -215,7 +217,6 @@
       
           if (data.type === "message" && data.data) {
             const message = data.data;
-            const externalThreadId = data.external_id;
             if (externalThreadId) {
               this.threadId = externalThreadId;
               localStorage.setItem("ttm_thread_id", this.threadId);
