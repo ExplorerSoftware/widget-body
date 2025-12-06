@@ -198,9 +198,9 @@
           }
           
           if (data.type === "history" && data.data) {
-            const threadId = data.data.id;
-            if (threadId) {
-              this.threadId = threadId;
+            const externalId = data.data.external_id;
+            if (externalId) {
+              this.threadId = externalId;
               localStorage.setItem("ttm_thread_id", this.threadId);
             }
             if (data.data.messages && Array.isArray(data.data.messages)) {
@@ -215,9 +215,9 @@
       
           if (data.type === "message" && data.data) {
             const message = data.data;
-            const threadId = message.thread_id;
-            if (threadId) {
-              this.threadId = threadId;
+            
+            if (externalThreadId) {
+              this.threadId = externalThreadId;
               localStorage.setItem("ttm_thread_id", this.threadId);
             }
             if (this.messagesLoaded) {
@@ -775,7 +775,7 @@
           this.ws.send(JSON.stringify({
             type: 'history',
             data: {
-              thread_id: this.threadId,
+              external_id: this.threadId,
               token: this.token
             }
           }));
