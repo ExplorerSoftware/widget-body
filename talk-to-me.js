@@ -242,7 +242,6 @@
           this._clearThreadData();
           this._closeWebSocket();
           setTimeout(() => {
-            alert("TENTANDO RECONEXÃO...");
             this._connectWebSocket();
           }, 100);
         }
@@ -1052,6 +1051,16 @@
               const firstStepButton = document.getElementById("ttm-first-step-button");
               const firstStepContainer = document.getElementById("ttm-first-step-container");
               const messagesContainer = document.querySelector('[id^="ttm-messages"]')?.parentElement;
+
+              if (firstStepInput) {
+                firstStepInput.style.outline = 'none';
+                firstStepInput.style.border = 'none';
+                // Ou se quiser manter a borda mas só remover no foco:
+                firstStepInput.addEventListener('focus', () => {
+                  firstStepInput.style.outline = 'none';
+                  firstStepInput.style.boxShadow = 'none';
+                });
+              }
 
               if (firstStepButton) {
                 const isDark = this.theme.theme === "dark";
