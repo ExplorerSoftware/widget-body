@@ -154,7 +154,8 @@
       }, 5000);
     
       this.ws.onopen = () => {
-
+        clearTimeout(connectionTimeout);
+        this.channelInactive = false;
         
         this._requestMetadata();
         
@@ -267,13 +268,11 @@
         widget_style: metadata.data.widget_style
       };
       
-      console.log('TTM: Configuração carregada via WebSocket', this.config);
-      
-
       if (this.config.widget_style) {
         this._applyWidgetStyles(this.config.widget_style);
       }
 
+      // Mostrar o container SOMENTE após os estilos serem aplicados
       if (this.container) {
         this.container.style.display = 'block';
       }
@@ -481,10 +480,7 @@
         if (!this.channelInactive) {
           this._connectWebSocket();
           await new Promise(resolve => setTimeout(resolve, 1000));
-        } else {
-          console.log('TTM: Não conectando - canal inativo');
-          return;
-        }
+        } 
       }
 
       this.ws.send(JSON.stringify({
