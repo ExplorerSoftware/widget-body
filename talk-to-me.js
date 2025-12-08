@@ -154,13 +154,7 @@
       }, 5000);
     
       this.ws.onopen = () => {
-        clearTimeout(connectionTimeout);
-        this.channelInactive = false;
-        
-        // Mostrar o chat apenas quando a conexão for estabelecida
-        if (this.container && this.ws) {
-          this.container.style.display = 'block';
-        }
+
         
         this._requestMetadata();
         
@@ -278,6 +272,10 @@
 
       if (this.config.widget_style) {
         this._applyWidgetStyles(this.config.widget_style);
+      }
+
+      if (this.container) {
+        this.container.style.display = 'block';
       }
     }
 
