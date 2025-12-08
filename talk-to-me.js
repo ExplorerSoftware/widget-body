@@ -14,7 +14,7 @@
       this.sessionId = this._generateSessionId();
       this.isOpen = false;
       this.userIdentifier = this._getUserIdentifier();
-      this.userName = localStorage.getItem("ttm_thread_id") || null;
+      this.userName = localStorage.getItem("ttm_user_name") || null;
       this.container = null;
       this.chatWindow = null;
       this.messagesContainer = null;
@@ -415,7 +415,6 @@
         }
       }
       
-      // Adicionar esta seção para atualizar o botão do primeiro passo
       const firstStepButton = document.getElementById("ttm-first-step-button");
       if (firstStepButton) {
         firstStepButton.style.background = isDark ? '#ffffff' : '#000000';
@@ -1076,6 +1075,7 @@
                   const name = firstStepInput.value.trim();
                   if (name) {
                     this.userName = name;
+                    localStorage.setItem("ttm_user_name", name);
 
                     if (firstStepContainer) {
                         firstStepContainer.style.display = 'none';
