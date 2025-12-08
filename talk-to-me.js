@@ -45,7 +45,7 @@
       };
       
       this._createUI();
-      // Ocultar o chat inicialmente
+
       if (this.container) {
         this.container.style.display = 'none';
       }
@@ -1653,7 +1653,7 @@
           ` : ""}
           </div>
 
-          ${ message.origin === "AI" && message.metadata?.ai_agent?.name ? `<span class="text-xs m-0 mt-1 whitespace-normal break-words" style="opacity: 0.7; color: ${textColor};">${message.metadata.ai_agent.name}</span>` : ""}
+          ${ message.origin === "AI" && message.metadata?.ai_agent?.persona ? `<span class="text-xs m-0 mt-1 whitespace-normal break-words" style="opacity: 0.7; color: ${textColor};">${message.metadata.ai_agent.name}</span>` : ""}
       `;
 
    
