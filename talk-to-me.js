@@ -956,37 +956,35 @@
      
                   <div class="p-2 flex-shrink-0">
                       <div
-                      class="flex flex-col p-1 gap-0 border-2 rounded-[1.5rem]"
+                      class="flex flex-row items-end p-1 gap-0 border-2 rounded-[1.5rem] relative"
                       style="background: ${isDark ? '#212224' : '#e9e9e9'}; border: none;"
                       >
                       <textarea
                           type="text"
                           id="ttm-input"
-                          class="flex relative p-2 w-full border-none bg-transparent h-[36px] resize-none max-h-[100px] line-height-1.5 overflow-y-auto outline-none text-sm"
+                          class="flex p-2 w-full border-none bg-transparent h-[36px] resize-none max-h-[100px] line-height-1.5 overflow-y-auto outline-none text-sm"
                           style="
                           color: ${isDark ? '#ffffff' : '#000000'};
                           padding-top: 10px;
                           padding-left: 1rem;
+                          padding-right: 3rem;
                           box-sizing: border-box;
                           "
                           placeholder="Digite aqui sua mensagem..."
                           maxlength="1000"
                       ></textarea>
-                      <div class="absolute bottom-0 right-0 flex flex-row items-center justify-between w-full gap-2">
-                          <div class="flex-1"></div>
-                          <button
+                      <button
                           id="ttm-send-button"
                           type="button"
-                          class="w-8 h-8 rounded-full flex items-center justify-center self-end m-1.5 border-none cursor-pointer transition-opacity hover:opacity-90 flex-shrink-0"
+                          class="w-8 h-8 rounded-full flex items-center justify-center m-1.5 border-none cursor-pointer transition-opacity hover:opacity-90 flex-shrink-0 absolute right-0 bottom-0"
                           style="background: ${isDark ? '#ffffff' : '#000000'};"
                           aria-label="Enviar mensagem"
-                          >
+                      >
                           <i 
                               data-lucide="arrow-up" 
                               style="width: 16px; height: 16px; color: ${isDark ? '#000000' : '#ffffff'};"
                           ></i>
-                          </button>
-                      </div>
+                      </button>
                       </div>
                   </div>
                   </div>
