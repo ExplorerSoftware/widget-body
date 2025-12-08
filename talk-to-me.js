@@ -14,7 +14,7 @@
       this.sessionId = this._generateSessionId();
       this.isOpen = false;
       this.userIdentifier = this._getUserIdentifier();
-      this.userName = null;
+      this.userName = localStorage.getItem("ttm_thread_id") || null;
       this.container = null;
       this.chatWindow = null;
       this.messagesContainer = null;
