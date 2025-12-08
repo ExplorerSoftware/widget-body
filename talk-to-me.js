@@ -271,7 +271,6 @@
         this._applyWidgetStyles(this.config.widget_style);
       }
 
-      // Mostrar o container SOMENTE após os estilos serem aplicados
       if (this.container) {
         this.container.style.display = 'block';
       }
@@ -963,7 +962,7 @@
                       <textarea
                           type="text"
                           id="ttm-input"
-                          class="flex p-1 w-full border-none bg-transparent h-[36px] resize-none max-h-[100px] line-height-1.5 overflow-y-auto outline-none text-sm"
+                          class="flex relative p-2 w-full border-none bg-transparent h-[36px] resize-none max-h-[100px] line-height-1.5 overflow-y-auto outline-none text-sm"
                           style="
                           color: ${isDark ? '#ffffff' : '#000000'};
                           padding-top: 10px;
@@ -973,7 +972,7 @@
                           placeholder="Digite aqui sua mensagem..."
                           maxlength="1000"
                       ></textarea>
-                      <div class="flex flex-row items-center justify-between w-full gap-2">
+                      <div class="absolute bottom-0 right-0 flex flex-row items-center justify-between w-full gap-2">
                           <div class="flex-1"></div>
                           <button
                           id="ttm-send-button"
@@ -1662,7 +1661,7 @@
           ` : ""}
           </div>
 
-          ${ message.origin === "AI" && message.metadata?.ai_agent?.persona ? `<span class="text-xs m-0 mt-1 whitespace-normal break-words" style="opacity: 0.7; color: ${textColor};">${message.metadata.ai_agent.persona}</span>` : ""}
+          ${ message.origin === "AI" && message.metadata?.ai_agent?.persona ? `<span class="text-xs m-0 mt-1 whitespace-normal break-words" style="opacity: 0.7; color: ${textColor};">Assistente virtual - ${message.metadata.ai_agent.persona}</span>` : ""}
       `;
 
    
