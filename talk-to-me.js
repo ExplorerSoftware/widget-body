@@ -39,7 +39,7 @@
         theme: "dark",
         name: "Chat",
         bodyColor: "#151619",
-        buttonColor: "#151619", 
+        buttonColor: this.theme.buttonColor || "#151619", 
         icon: "message-circle",
         logo_url: null,
         wallpaper_url: null,
