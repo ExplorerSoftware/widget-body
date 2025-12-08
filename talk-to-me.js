@@ -1059,33 +1059,33 @@
                 firstStepButton.style.border = 'none';
                 firstStepButton.style.color = isDark ? '#000000' : '#ffffff';
                 firstStepButton.style.cursor = 'pointer';
+
+                firstStepButton.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.userName = firstStepInput.value;
+
+                    const name = firstStepInput.value.trim();
+                    if (name) {
+                      this.userName = name;
+                      localStorage.setItem("ttm_user_name", name);
+
+                      if (firstStepContainer) {
+                          firstStepContainer.style.display = 'none';
+                      }
+                      if (messagesContainer) {
+                          messagesContainer.style.display = 'flex';
+                      }
+                  }
+                });
+              
+                firstStepInput.addEventListener("keypress", (e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    firstStepButton.click();
+                  }
+                });
             }
-
-              firstStepButton.addEventListener("click", (e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  this.userName = firstStepInput.value;
-
-                  const name = firstStepInput.value.trim();
-                  if (name) {
-                    this.userName = name;
-                    localStorage.setItem("ttm_user_name", name);
-
-                    if (firstStepContainer) {
-                        firstStepContainer.style.display = 'none';
-                    }
-                    if (messagesContainer) {
-                        messagesContainer.style.display = 'flex';
-                    }
-                }
-              })
-            
-              firstStepInput.addEventListener("keypress", (e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  firstStepButton.click();
-                }
-              })
           }
 
     _updateSendButtonIcon() {
