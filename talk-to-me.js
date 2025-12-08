@@ -962,12 +962,10 @@
                       <textarea
                           type="text"
                           id="ttm-input"
-                          class="flex p-2 w-full border-none bg-transparent h-[36px] resize-none max-h-[100px] line-height-1.5 overflow-y-auto outline-none text-sm"
+                          class="flex p-2 w-[90%] border-none bg-transparent h-[36px] resize-none max-h-[100px] line-height-1.5 overflow-y-auto outline-none text-sm"
                           style="
                           color: ${isDark ? '#ffffff' : '#000000'};
                           padding-top: 10px;
-                          padding-left: 1rem;
-                          padding-right: 3rem;
                           box-sizing: border-box;
                           "
                           placeholder="Digite aqui sua mensagem..."
