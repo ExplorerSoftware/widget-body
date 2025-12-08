@@ -14,7 +14,7 @@
       this.sessionId = this._generateSessionId();
       this.isOpen = false;
       this.userIdentifier = this._getUserIdentifier();
-      this.userName = localStorage.getItem("ttm_user_name") || null; 
+      this.userName = null;
       this.container = null;
       this.chatWindow = null;
       this.messagesContainer = null;
@@ -39,14 +39,13 @@
         theme: "dark",
         name: "Chat",
         bodyColor: "#151619",
-        buttonColor: this.theme.buttonColor || "#151619", 
         icon: "message-circle",
         logo_url: null,
         wallpaper_url: null,
       };
       
       this._createUI();
-
+      // Ocultar o chat inicialmente
       if (this.container) {
         this.container.style.display = 'none';
       }
@@ -68,8 +67,13 @@
 
     async _loadLibraries() {
       if (this.librariesLoaded) return;
+
+      try {
         await Promise.all([this._loadTailwind(), this._loadFramerMotion(), this._loadLucide()]);
         this.librariesLoaded = true;
+      } catch (error) {
+        console.error("Erro ao carregar bibliotecas:", error);
+      }
     }
 
     _loadTailwind() {
@@ -142,7 +146,7 @@
           this.ws.close();
           this.ws = null;
           this.channelInactive = true;
-
+          // Ocultar o chat se a conexão falhar
           if (this.container) {
             this.container.style.display = 'none';
           }
@@ -153,6 +157,7 @@
         clearTimeout(connectionTimeout);
         this.channelInactive = false;
         
+        // Mostrar o chat apenas quando a conexão for estabelecida
         if (this.container && this.ws) {
           this.container.style.display = 'block';
         }
@@ -166,6 +171,8 @@
     
       this.ws.onerror = (e) => {
         clearTimeout(connectionTimeout);
+        console.error('TTM: WS error:', e);
+        // Ocultar o chat em caso de erro
         if (this.container) {
           this.container.style.display = 'none';
         }
@@ -176,6 +183,7 @@
         console.log('TTM: WebSocket fechado. Código: ' + e.code);
 
         this.ws = null;
+        // Ocultar o chat quando a conexão for fechada
         if (this.container) {
           this.container.style.display = 'none';
         }
@@ -184,16 +192,15 @@
       this.ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
         
-        const externalThreadId = data.external_id;
-        
         if (data.type === "metadata" && data.data) {
           this._handleMetadata(data.data);
           return;
         }
         
         if (data.type === "history" && data.data) {
-          if (externalThreadId) {
-            this.threadId = externalThreadId;
+          const threadId = data.data.id;
+          if (threadId) {
+            this.threadId = threadId;
             localStorage.setItem("ttm_thread_id", this.threadId);
           }
           if (data.data.messages && Array.isArray(data.data.messages)) {
@@ -208,8 +215,9 @@
     
         if (data.type === "message" && data.data) {
           const message = data.data;
-          if (externalThreadId) {
-            this.threadId = externalThreadId;
+          const threadId = message.thread_id;
+          if (threadId) {
+            this.threadId = threadId;
             localStorage.setItem("ttm_thread_id", this.threadId);
           }
           if (this.messagesLoaded) {
@@ -407,6 +415,7 @@
         }
       }
       
+      // Adicionar esta seção para atualizar o botão do primeiro passo
       const firstStepButton = document.getElementById("ttm-first-step-button");
       if (firstStepButton) {
         firstStepButton.style.background = isDark ? '#ffffff' : '#000000';
@@ -457,6 +466,7 @@
       if (!textOverride) {
         this.inputField.value = "";
         this.inputField.style.height = "auto";
+        this._updateSendButtonIcon();
       }
 
       if (text) {
@@ -717,6 +727,7 @@
           this.originalPlaceholder = null;
         }
 
+        this._updateSendButtonIcon(); 
     }
     this.lucide.createIcons();
     const stopIcon = this.sendButton.querySelector('svg');
@@ -739,7 +750,6 @@
     _clearThreadData() {
       localStorage.removeItem("ttm_thread_id");
       localStorage.removeItem("ttm_user_id");
-      localStorage.removeItem("ttm_user_name"); 
 
       this.threadId = null;
       this.messagesLoaded = false;
@@ -747,7 +757,6 @@
       this.messagesQueue = [];
       this.pendingWebSocketMessages = [];
       this.userIdentifier = this._getUserIdentifier();
-      this.userName = null; 
 
       this._updateNotificationCounter();
 
@@ -1042,7 +1051,7 @@
                   e.target.style.height = "30px";
                   const newHeight = Math.min(e.target.scrollHeight, 100);
                   e.target.style.height = newHeight + "px";
-
+                  this._updateSendButtonIcon();
               });
 
 
@@ -1067,7 +1076,6 @@
                   const name = firstStepInput.value.trim();
                   if (name) {
                     this.userName = name;
-                    localStorage.setItem("ttm_user_name", name); 
 
                     if (firstStepContainer) {
                         firstStepContainer.style.display = 'none';
@@ -1086,7 +1094,10 @@
               })
           }
 
-
+    _updateSendButtonIcon() {
+          const hasText = this.inputField?.value.length > 0;
+          this.lucide.createIcons();
+          }
 
     _visualizer() {
           const visualizerOverlay = document.createElement('div');
